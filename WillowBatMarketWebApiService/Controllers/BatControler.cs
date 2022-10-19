@@ -35,10 +35,11 @@ namespace WillowBatMarketWebApiService.Controllers
 
         }
         [HttpGet("fetchAll")]
-        public ResponseModel fetchAll()
+        public IActionResult fetchAll()
         {
 
-            return _iBatRepository.GetAll();
+            var res=_iBatRepository.GetAll();
+            return Ok(res);
         }
 
         [HttpDelete("delete")]
