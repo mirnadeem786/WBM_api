@@ -6,15 +6,13 @@ namespace WillowBatMarketWebApiService.Models
     public class WillowModel
     {
 
-
         [Key]
-        public Guid WILLOW_ID { get; set; }
-        public Guid WILLOW_SELLER_ID { get; set; }
-        public string IMAGE { get; set; }
-        public int PRICE { get; set; }
-        public string TYPE { get; set; }
-
-        public Decimal SIZE { get; set; }
+        public Guid willowId { get; set; }
+        public Guid willowSellerId { get; set; }
+        public string WillowImage { get; set; }
+        public decimal willowPrice { get; set; }
+        public string willowType { get; set; }
+        public Decimal willowSize { get; set; }
 
 
     }
