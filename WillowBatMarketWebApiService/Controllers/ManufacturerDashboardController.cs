@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Threading.Tasks;
 using WillowBatMarketWebApiService.BusinessLayer;
+using WillowBatMarketWebApiService.Entity;
 using WillowBatMarketWebApiService.Models;
 
 namespace WillowBatMarketWebApiService.Controllers
@@ -18,10 +20,10 @@ namespace WillowBatMarketWebApiService.Controllers
 
 
         [HttpGet]
-        public ResponseModel fetchwillow(string willowType)
+        public IActionResult fetchwillow(string willowType)
         {
-            return imanufacturerDashboardRepository.fetch(willowType);
-
+            var res= imanufacturerDashboardRepository.fetch(willowType);
+            return Ok(res);
 
 
         }
@@ -39,6 +41,16 @@ namespace WillowBatMarketWebApiService.Controllers
         {
             return imanufacturerDashboardRepository.ListOfParticipants(auctionId);
 
+
+        }
+        [HttpGet("fetch-all-Auction-willow")]
+        public IActionResult fetchAllAuctionWillow()
+        {
+
+
+            var res = imanufacturerDashboardRepository.fetchAllAuctionWillows();
+
+            return Ok(res);
 
         }
 

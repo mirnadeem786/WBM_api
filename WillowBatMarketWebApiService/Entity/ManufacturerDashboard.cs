@@ -10,7 +10,7 @@ namespace WillowBatMarketWebApiService.Entity
             public string willowSellerContactNo { get; set; }
             public int willowSize { get; set; }
             public string willowType { get; set; }
-            public byte[] willowImage { get; set; }
+            public string willowImage { get; set; }
              public decimal willowPrice { get; set; }
 
     }

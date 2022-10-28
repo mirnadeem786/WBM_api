@@ -13,22 +13,27 @@ namespace WillowBatMarketWebApiService
 {
     public class Startup
     {
-
+        readonly string MyAllowSpecificOrigins = "APIPolicy";
 
         public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
+             
         {
+
+            services.AddHttpContextAccessor();
             services.AddDbContext<AppDbContext>();
             services.AddScoped<IManufacturerRepository, ManufacturerRepository>();
             services.AddScoped<IBatRepository, BatRepository>();
             services.AddScoped<IWillowSellerRepository, WillowSellerRepository>();
             services.AddScoped<IManufacturerRepository, ManufacturerRepository>();
-            services.AddScoped<IWillowRepository, WillowRepository>();
+           services.AddScoped<IWillowRepository, WillowRepository>();
+            services.AddScoped<ICricketerRepository, CricketerRepository>();
             services.AddScoped<ICricketerDashboardRepository,CricketerDashboardRepository>();
             services.AddScoped<ImanufacturerDashboardRepository, ManufacturerDashboardRepository>();
             services.AddScoped<IwillowSellerRepositoryDashboard, willowSellerRepositoryDashboard>();
+            services.AddScoped<IUsserRepository,UsserRepository>();
             services.AddAutoMapper(typeof(Startup));
             // add this line to apply conversion globally and not only for one property
 
@@ -55,6 +60,10 @@ namespace WillowBatMarketWebApiService
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            app.UseCors(x => x
+              .AllowAnyOrigin()
+              .AllowAnyMethod()
+              .AllowAnyHeader());
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -62,16 +71,19 @@ namespace WillowBatMarketWebApiService
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "WillowBatMarketWebApiService v1"));
             }
 
-            app.UseHttpsRedirection();
-
             app.UseRouting();
+                app.UseDefaultFiles();
+                app.UseStaticFiles();
+                app.UseCors(MyAllowSpecificOrigins);
 
-            app.UseAuthorization();
+          
 
+            app.UseHttpsRedirection();
             app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapControllers();
-            });
+                {
+                    endpoints.MapControllers();
+                });
+             
+            }
         }
-    }
 }

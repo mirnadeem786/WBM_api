@@ -1,14 +1,15 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System;
+using WillowBatMarketWebApiService.Entity;
 
 namespace WillowBatMarketWebApiService.Models
 {
-    public class WillowSellerModel
+    public class WillowSellerModel 
     {
-        public string WillowSellerName { get; set; }
-        [Key]
-        public Guid Id { get; set; }
-        public string Phone { get; set; }
+      
+        public Guid willowSellerId { get; set; }
+        public Guid usserId { get; set; }
+  
 
 
 

@@ -1,24 +1,27 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using System;
+using System.IO;
 using System.Linq;
 using WillowBatMarketWebApiService.DataLayer;
 using WillowBatMarketWebApiService.Entity;
 using WillowBatMarketWebApiService.Models;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace WillowBatMarketWebApiService.BusinessLayer
 {
     public interface IWillowRepository
     {
 
+           public ResponseModel Get(Guid id);
+            public ResponseModel Create( WillowModel willowMode);
+            public ResponseModel Update(WillowModel willowModel, Guid id);
+            public ResponseModel Delete(Guid id);
+            public ResponseModel GetAll();
 
-        public ResponseModel Get(Guid id);
-        public ResponseModel Create(WillowModel willowModel);
-        public ResponseModel Update(WillowModel willowModel, Guid id);
-        public ResponseModel Delete(Guid id);
-        public ResponseModel GetAll();
 
-
-    }
+        }
 
     public class WillowRepository : IWillowRepository
     {
@@ -32,35 +35,59 @@ namespace WillowBatMarketWebApiService.BusinessLayer
             responseModel = new ResponseModel();
         }
 
-        public ResponseModel Create(WillowModel willowModel)
+        public ResponseModel Create([FromForm] WillowModel willowModel)
         {
+
+
+
             try
             {
-                Willow willow = mapper.Map<Willow>(willowModel);
-                _appDbContext.Willow.Add(willow);
-                responseModel.Data = willow;
+
+
+
+
+                var willow = mapper.Map<Willow>(willowModel);
+
+                if (willow.willowId == Guid.Empty)
+                {
+
+                    willow.willowId = Guid.NewGuid();
+
+                }
+
+              /*  using (var stream = new MemoryStream())
+                {
+                    image.CopyTo(stream);
+                    willow.WillowImage = stream.ToArray();
+
+              */
+                
+            
+                _appDbContext.Add(willow);
                 _appDbContext.SaveChanges();
-                responseModel.Message = "succesfully inserted";
                 responseModel.Success = true;
+                responseModel.Data = willow;
                 return responseModel;
 
             }
             catch (Exception ex)
+
             {
-                responseModel.Message = ex.Message;
-                responseModel.Error = ex.StackTrace;
+                responseModel.Success = false;
+                responseModel.Message = ex.GetBaseException().Message;
                 return responseModel;
             }
-        }
 
+
+        }
         public ResponseModel Delete(Guid id)
         {
             try
             {
-                var willow = _appDbContext.Bat.Find(id);
+                var willow = _appDbContext.Willow.Find(id);
                 if (willow != null)
                 {
-                    _appDbContext.Bat.Remove(willow);
+                    _appDbContext.Willow.Remove(willow);
                     _appDbContext.SaveChanges();
                     responseModel.Data = id;
                     responseModel.Message = "sucessfully deleted";
@@ -101,7 +128,7 @@ namespace WillowBatMarketWebApiService.BusinessLayer
             try
             {
 
-                responseModel.Data = _appDbContext.Bat.ToList();
+                responseModel.Data = _appDbContext.Willow.ToList();
                 _appDbContext.SaveChanges();
                 responseModel.Success = true;
                 return responseModel;
@@ -136,7 +163,12 @@ namespace WillowBatMarketWebApiService.BusinessLayer
                 return responseModel;
             }
         }
-
-
     }
-}
+    }
+
+
+
+       
+    
+
+

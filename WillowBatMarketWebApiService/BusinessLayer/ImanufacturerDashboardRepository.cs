@@ -6,11 +6,12 @@ using WillowBatMarketWebApiService.DataLayer;
 using WillowBatMarketWebApiService.Entity;
 using WillowBatMarketWebApiService.Models;
 
+
 namespace WillowBatMarketWebApiService.BusinessLayer
 {
     public interface ImanufacturerDashboardRepository
     {
-
+        public ResponseModel fetchAllAuctionWillows();
         public ResponseModel fetch(string type);
         public ResponseModel partcipateInAuction(Guid manufacturerId, Guid auctionId,decimal price);
         public ResponseModel ListOfParticipants(Guid auctionId);
@@ -48,7 +49,42 @@ namespace WillowBatMarketWebApiService.BusinessLayer
 
         }
 
-        public ResponseModel highestBidder(Guid auctionId)
+        public ResponseModel fetchAllAuctionWillows()
+        {
+            var querry = from auction in appDbContext.Set<Auction>()
+                         join willow in appDbContext.Set<Willow>() on auction.itemId equals willow.willowId
+                         select new
+                         {
+                             auction.auctionId,
+                             auction.itemId,
+                             auction.startingDateTime,
+                             auction.endDateTime,
+                             willow.willowPrice,
+                             willow.WillowImage,
+                             willow.willowType,
+                             willow.willowSize,
+                             willow.willowSellerId
+
+                         };
+
+
+            if (querry == null)
+
+            {
+                responseModel.Data = querry;
+                return responseModel;
+            }
+
+            responseModel.Data = querry;
+            return responseModel;
+
+
+        }
+
+
+
+
+    public ResponseModel highestBidder(Guid auctionId)
         {
             var record = appDbContext.Bidder.Where(a => a.auctionId == auctionId).OrderByDescending(x=>x.amount).FirstOrDefault();
             responseModel.Data = record;

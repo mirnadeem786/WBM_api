@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System;
 using WillowBatMarketWebApiService.BusinessLayer;
+using WillowBatMarketWebApiService.Entity;
 using WillowBatMarketWebApiService.Models;
 
 namespace WillowBatMarketWebApiService.Controllers
@@ -11,10 +12,14 @@ namespace WillowBatMarketWebApiService.Controllers
     {
 
         private readonly IBatRepository _iBatRepository;
-        public BatControler(IBatRepository batRepository)
+        private readonly IUsserRepository _uissserRepository;
+
+        private readonly IWillowRepository willowRepository1;
+        public BatControler(IBatRepository batRepository,IUsserRepository usserRepository)
         {
             this._iBatRepository = batRepository;
-
+       
+            _uissserRepository=usserRepository;
         }
 
 
@@ -26,6 +31,8 @@ namespace WillowBatMarketWebApiService.Controllers
 
 
         }
+  
+
         [HttpGet("fetch_By_Id")]
 
         public ResponseModel getById(Guid id)
@@ -35,11 +42,10 @@ namespace WillowBatMarketWebApiService.Controllers
 
         }
         [HttpGet("fetchAll")]
-        public IActionResult fetchAll()
+        public ResponseModel fetchAll()
         {
 
-            var res=_iBatRepository.GetAll();
-            return Ok(res);
+            return _iBatRepository.GetAll();
         }
 
         [HttpDelete("delete")]

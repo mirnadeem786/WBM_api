@@ -40,7 +40,9 @@ namespace WillowBatMarketWebApiService.DataLayer
         public DbSet<OrderStatus> OrderStatus { get; set; }
         public DbSet<Auction> Auction { get; set; }
         public DbSet<Bidder> Bidder { get; set; }
-
+        public DbSet<Ussers> Ussers { get; set; }
+        public DbSet<UsserType>UsserType { get; set; }
+   
 
 
 

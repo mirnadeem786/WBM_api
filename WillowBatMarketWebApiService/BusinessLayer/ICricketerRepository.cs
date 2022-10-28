@@ -60,7 +60,7 @@ namespace WillowBatMarketWebApiService.BusinessLayer
             try
             {
 
-                responseModel.Data = _appDbContext.Remove(_appDbContext.Cricketer.FirstOrDefault(x => x.CRICKETER_ID == id));
+                responseModel.Data = _appDbContext.Remove(_appDbContext.Cricketer.FirstOrDefault(x => x.cricketerId == id));
                 _appDbContext.SaveChanges();
                 responseModel.Message = "sucessfully deleted";
                 return responseModel;
@@ -81,7 +81,7 @@ namespace WillowBatMarketWebApiService.BusinessLayer
 
             try
             {
-                responseModel.Data = _appDbContext.Cricketer.FirstOrDefault(x => x.CRICKETER_ID == id);
+                responseModel.Data = _appDbContext.Cricketer.FirstOrDefault(x => x.cricketerId == id);
                 _appDbContext.SaveChanges();
                 responseModel.Message = "sucess";
                 return responseModel;
