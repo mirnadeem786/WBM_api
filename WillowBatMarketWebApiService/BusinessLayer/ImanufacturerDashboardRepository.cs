@@ -13,7 +13,7 @@ namespace WillowBatMarketWebApiService.BusinessLayer
     {
         public ResponseModel fetchAllAuctionWillows();
         public ResponseModel fetch(string type);
-        public ResponseModel partcipateInAuction(Guid manufacturerId, Guid auctionId,decimal price);
+        public ResponseModel partcipateInAuction(Bidder bidder);
         public ResponseModel ListOfParticipants(Guid auctionId);
      public ResponseModel highestBidder(Guid auctionId);
 
@@ -54,7 +54,8 @@ namespace WillowBatMarketWebApiService.BusinessLayer
             var querry = from auction in appDbContext.Set<Auction>()
                          join willow in appDbContext.Set<Willow>() on auction.itemId equals willow.willowId
                          select new
-                         {
+                         {   
+                             auction.highestAmount,
                              auction.auctionId,
                              auction.itemId,
                              auction.startingDateTime,
@@ -71,10 +72,10 @@ namespace WillowBatMarketWebApiService.BusinessLayer
             if (querry == null)
 
             {
-                responseModel.Data = querry;
+                responseModel.Success = false;
+                responseModel.Message = "NO RECORD";
                 return responseModel;
             }
-
             responseModel.Data = querry;
             return responseModel;
 
@@ -87,6 +88,12 @@ namespace WillowBatMarketWebApiService.BusinessLayer
     public ResponseModel highestBidder(Guid auctionId)
         {
             var record = appDbContext.Bidder.Where(a => a.auctionId == auctionId).OrderByDescending(x=>x.amount).FirstOrDefault();
+            if(record == null)
+            {
+                responseModel.Success = false;
+                responseModel.Message = "NO RECORD";
+
+            }
             responseModel.Data = record;
             return responseModel;
    
@@ -96,22 +103,20 @@ namespace WillowBatMarketWebApiService.BusinessLayer
         {
 
             var querry = from auction in appDbContext.Set<Auction>()
-                         join bidder in appDbContext.Set<Bidder>() on auction.auctionId equals bidder.auctionId
+                         join bidder in appDbContext.Set<Bidder>() on auctionId equals bidder.auctionId
                          select new
                          {
-                             auction.auctionId,
-                             auction.itemId,
-                             auction.startingDateTime,
-                             auction.endDateTime,
-                            bidder.amount,
-                             bidder.bidderId
+                             bidder.amount,
+                             bidder.bidderName,
+                             bidder.bidDate,
                          };
 
 
              if (querry==null)
 
             {
-                responseModel.Data = querry;
+                responseModel.Message = "NO RECORD";
+                responseModel.Success = false;
                 return responseModel;
             }
 
@@ -121,42 +126,66 @@ namespace WillowBatMarketWebApiService.BusinessLayer
 
         }
 
-        public ResponseModel partcipateInAuction(Guid manufacturerId, Guid auctionId, decimal price)
+        public ResponseModel partcipateInAuction(Bidder bidder)
         {
-          
-            Auction record = appDbContext.Auction.FirstOrDefault(i => i.auctionId == auctionId);
-            if(record!=null &&record.startingPrice>price)
+
+            //   var record = db.Table.Where(p => p.Id == Id).OrderByDescending(x => x.ReceivedDateTime).FiBrstOrDefault();
+            // if (record != null) { }
+            
+
+            Auction record = appDbContext.Auction.Where(i => i.auctionId == bidder.auctionId).OrderByDescending(x => x.highestAmount).FirstOrDefault();
+            if(record==null)
             {
-                responseModel.Message = "price given is below the starting price";
+                responseModel.Success = false;
+                responseModel.Message = "no such auction is going";
+                return responseModel;
+            }
+           else if(record.highestAmount>=bidder.amount)
+            {
+                responseModel.Message = "price given is below or equal the given bid ";
+                responseModel.Success = false;
                 return responseModel;
 
             }
-           else if (record!=null &&record.highestAmount < price)
+            try
             {
-                record.highestAmount = price;
+                updateAuction(bidder.amount, bidder.auctionId);
 
                 appDbContext.Bidder.Add(new Bidder()
                 {
 
-                    bidderId = manufacturerId,
-                    amount = price,
-                    auctionId = auctionId
+                    bidderId = bidder.bidderId,
+                    amount = bidder.amount,
+                    auctionId = bidder.auctionId,
+                    bidDate=DateTime.Now,
+                    bidderName=bidder.bidderName,
 
 
 
-                }); ;
+                }) ;
                 appDbContext.SaveChanges();
-              
+                responseModel.Message = "bid has been placed ";
             }
-            else
+            catch(Exception e)
             {
-                responseModel.Message = "please mention price above the shown price";
+                responseModel.Message = "some error occured while inserting ";
+                responseModel.Success = false;
 
             }
+            
+           
+            
             return responseModel;
 
 
 
+        }
+
+        private void updateAuction(decimal price,Guid auctionId)
+        {
+            Auction record = appDbContext.Auction.Find(auctionId);
+            record.highestAmount = price;
+            appDbContext.Update(record);
         }
     }
 

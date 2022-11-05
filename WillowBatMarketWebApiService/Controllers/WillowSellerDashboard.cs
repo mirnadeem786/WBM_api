@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using System;
 using WillowBatMarketWebApiService.BusinessLayer;
+using WillowBatMarketWebApiService.Entity;
 using WillowBatMarketWebApiService.Models;
 
 namespace WillowBatMarketWebApiService.Controllers
@@ -20,10 +21,10 @@ namespace WillowBatMarketWebApiService.Controllers
 
         [HttpPost("start_bidding")]
 
-        public ResponseModel startbidding(Guid itemId, DateTime startingTime, DateTime endTime, decimal startingPrice)
+        public ResponseModel startbidding(Auction auction)
         {
 
-            return iwillowSellerDashboard.startBiddeing(itemId, startingTime, endTime, startingPrice);
+            return iwillowSellerDashboard.startBiddeing(auction);
 
         }
         [HttpPost("upload_Willow")]

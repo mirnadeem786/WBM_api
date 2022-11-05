@@ -15,6 +15,8 @@ namespace WillowBatMarketWebApiService.Entity
 
         [ForeignKey ("auctionId")]
         public Guid auctionId { get; set; }
+        public DateTime bidDate { get; set; }
+        public string bidderName { get; set; }
 
 
     }

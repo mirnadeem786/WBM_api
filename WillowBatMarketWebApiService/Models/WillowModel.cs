@@ -13,7 +13,7 @@ namespace WillowBatMarketWebApiService.Models
         public Guid willowId { get; set; }
         public Guid willowSellerId { get; set; }
        
-        public byte[] WillowImage { get; set; }
+        public string WillowImage { get; set; }
         public decimal willowPrice { get; set; }
         public string willowType { get; set; }
         public int willowSize { get; set; }

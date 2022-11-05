@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.Extensions.Primitives;
 using System;
 using WillowBatMarketWebApiService.DataLayer;
 using WillowBatMarketWebApiService.Entity;
@@ -8,7 +9,7 @@ namespace WillowBatMarketWebApiService.BusinessLayer
 {
     public interface IwillowSellerRepositoryDashboard
     {
-        public ResponseModel startBiddeing(Guid itemId, DateTime startingTime, DateTime endTime, decimal startingPrice);
+        public ResponseModel startBiddeing(Auction auction);
         public ResponseModel upload(WillowModel model);
 
 
@@ -29,26 +30,18 @@ namespace WillowBatMarketWebApiService.BusinessLayer
         }
 
 
-        public ResponseModel startBiddeing(Guid itemId, DateTime startingTime, DateTime endTime, decimal startingPrice)
-
+        public ResponseModel startBiddeing(Auction auction)
         {
-
             try
+
             {
-                _appDbContext.Auction.Add(new Auction
-                {
-
-                    auctionId = Guid.NewGuid(),
-                    startingDateTime = startingTime,
-                    endDateTime = endTime,
-                    startingPrice = startingPrice,
-                    itemId = itemId,
-                    highestAmount = 0
-
-                });
+                
+                auction.auctionId = Guid.NewGuid();
+                auction.highestAmount = auction.startingPrice;
+                _appDbContext.Auction.Add(auction);
                 _appDbContext.SaveChanges();
                 responseModel.Success = true;
-                responseModel.Data = itemId;
+                responseModel.Data = auction.itemId;
                 return responseModel;
             }
             catch (Exception ex)

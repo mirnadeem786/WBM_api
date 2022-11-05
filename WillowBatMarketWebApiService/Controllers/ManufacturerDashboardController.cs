@@ -29,10 +29,10 @@ namespace WillowBatMarketWebApiService.Controllers
         }
         [HttpPost("participate_In_Auction")]
 
-        public ResponseModel participateInAuction( Guid auctionId,Guid manufacturerId,decimal price)
+        public ResponseModel participateInAuction( Bidder bidder)
         {
 
-            return imanufacturerDashboardRepository.partcipateInAuction(manufacturerId,auctionId, price);
+            return imanufacturerDashboardRepository.partcipateInAuction(bidder);
 
         }
 

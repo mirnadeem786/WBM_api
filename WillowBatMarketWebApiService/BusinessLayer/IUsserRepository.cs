@@ -143,6 +143,7 @@ namespace WillowBatMarketWebApiService.BusinessLayer
                              join manufacturer in _appDbContext.Set<Manufacturer>() on ussers.usserId equals manufacturer.usserId
                              select new
                              {
+                                 usser.usserType,
                                  usser.name,
                                  usser.email,
                                  usser.addressDetails,
@@ -152,17 +153,17 @@ namespace WillowBatMarketWebApiService.BusinessLayer
                              };
 
                 responseModel.Data = querry;
-                return responseModel;
+               
             }
             else if (usser.usserType.Equals("WillowSeller"))
             {
 
 
                 var querry = from ussers in _appDbContext.Set<Ussers>()
-                             join willoWseller in _appDbContext.Set<WillowSeller>() on ussers.usserId equals willowSeller.usserId into users
-                             from subuser in users.DefaultIfEmpty()
+                             join willowSeller in _appDbContext.Set<WillowSeller>() on ussers.usserId equals willowSeller.usserId
                              select new
                              {
+                                 usser.usserType,
                                  usser.name,
                                  usser.email,
                                  usser.addressDetails,
@@ -172,7 +173,7 @@ namespace WillowBatMarketWebApiService.BusinessLayer
                              };
 
                 responseModel.Data = querry;
-                return responseModel;
+                
             }
             else
             {
@@ -182,6 +183,7 @@ namespace WillowBatMarketWebApiService.BusinessLayer
                              join cricketer in _appDbContext.Set<Cricketer>() on ussers.usserId equals cricketer.usserId 
                              select new
                              {
+                                 usser.usserType,
                                  usser.name,
                                  usser.email,
                                  usser.addressDetails,
@@ -191,10 +193,10 @@ namespace WillowBatMarketWebApiService.BusinessLayer
                              };
 
                 responseModel.Data = querry;
-                return responseModel;
+               
             }
 
-
+            return responseModel;
 
         }
 
