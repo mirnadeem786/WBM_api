@@ -19,7 +19,7 @@ namespace WillowBatMarketWebApiService.Controllers
         }
 
 
-        [HttpGet]
+        [HttpGet("fetch-willows")]
         public IActionResult fetchwillow(string willowType)
         {
             var res= imanufacturerDashboardRepository.fetch(willowType);
@@ -27,6 +27,25 @@ namespace WillowBatMarketWebApiService.Controllers
 
 
         }
+        [HttpGet("winning-bidder")]
+        public IActionResult winning(Guid auctionId)
+        {
+            var res = imanufacturerDashboardRepository.winner(auctionId);
+            return Ok(res);
+
+
+        }
+
+        [HttpGet("my-bids")]
+        public IActionResult myBids(Guid bidderId)
+        {
+            var res = imanufacturerDashboardRepository.MyBidsDetails(bidderId);
+            return Ok(res);
+
+
+        }
+
+
         [HttpPost("participate_In_Auction")]
 
         public ResponseModel participateInAuction( Bidder bidder)

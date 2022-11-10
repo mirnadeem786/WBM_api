@@ -2,10 +2,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using WillowBatMarketWebApiService.Controllers;
 using WillowBatMarketWebApiService.DataLayer;
 using WillowBatMarketWebApiService.Entity;
 using WillowBatMarketWebApiService.Models;
-
+using Willow = WillowBatMarketWebApiService.Entity.Willow;
 
 namespace WillowBatMarketWebApiService.BusinessLayer
 {
@@ -16,7 +17,10 @@ namespace WillowBatMarketWebApiService.BusinessLayer
         public ResponseModel partcipateInAuction(Bidder bidder);
         public ResponseModel ListOfParticipants(Guid auctionId);
      public ResponseModel highestBidder(Guid auctionId);
+        public ResponseModel MyBidsDetails(Guid BidderId);
+        public Auction getAuctionDetails(Guid auctionId);
 
+        public ResponseModel winner(Guid auctionId);
 
     }
 
@@ -82,10 +86,13 @@ namespace WillowBatMarketWebApiService.BusinessLayer
 
         }
 
+        public Auction getAuctionDetails(Guid auctionId)
+        {
+            Auction auction = appDbContext.Auction.FirstOrDefault(a => a.auctionId == auctionId);
+            return auction;
+        }
 
-
-
-    public ResponseModel highestBidder(Guid auctionId)
+        public ResponseModel highestBidder(Guid auctionId)
         {
             var record = appDbContext.Bidder.Where(a => a.auctionId == auctionId).OrderByDescending(x=>x.amount).FirstOrDefault();
             if(record == null)
@@ -126,6 +133,45 @@ namespace WillowBatMarketWebApiService.BusinessLayer
 
         }
 
+        public ResponseModel MyBidsDetails(Guid BidderId)
+        {
+            try
+            {
+
+                var query = (from auction in appDbContext.Set<Auction>()
+                             join bidders in appDbContext.Set<Bidder>() on auction.auctionId equals bidders.auctionId
+                             join willow in appDbContext.Set<Willow>() on auction.itemId equals willow.willowId
+                            where bidders.bidderId == BidderId
+                             select new
+                             {
+                                 auction.startingDateTime,
+                                 auction.endDateTime,
+                                 bidders.amount,
+                                 bidders.bidDate,
+                                 willow.WillowImage,
+                                 willow.willowType,
+                                 willow.willowSize
+
+                             }).ToList();
+
+                if (query.Count() == 0)
+                {
+                    responseModel.Message = "no result";
+                    return responseModel;
+                }
+                responseModel.Data = query;
+                responseModel.Message = "sucessfully fetched";
+
+
+            }
+            catch (Exception e)
+            {
+
+                responseModel.Message = "error while fetching";
+            }
+           
+            return responseModel;
+        }
         public ResponseModel partcipateInAuction(Bidder bidder)
         {
 
@@ -179,6 +225,27 @@ namespace WillowBatMarketWebApiService.BusinessLayer
 
 
 
+        }
+
+        public ResponseModel winner(Guid auctionId)
+        {
+            var record = appDbContext.Auction.FirstOrDefault(a => a.auctionId == auctionId);
+            if(record==null)
+            {
+                
+                responseModel.Message = "no such Auction Exist";
+                responseModel.Success = false;
+                return responseModel;
+            }
+            if(record.endDateTime<=DateTime.Now)
+            {
+
+               responseModel.Data= highestBidder(auctionId).Data;
+                return responseModel;
+            }
+            responseModel.Message = "Auction is still running";
+            responseModel.Success = false;
+            return responseModel;
         }
 
         private void updateAuction(decimal price,Guid auctionId)

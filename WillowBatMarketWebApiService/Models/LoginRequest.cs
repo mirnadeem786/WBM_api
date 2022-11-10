@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace WillowBatMarketWebApiService.Models
 {
@@ -11,6 +12,7 @@ namespace WillowBatMarketWebApiService.Models
 
             [Required]
             public string Password { get; set; }
+       
     
 
     }

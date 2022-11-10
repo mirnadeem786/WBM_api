@@ -141,6 +141,7 @@ namespace WillowBatMarketWebApiService.BusinessLayer
 
                 var querry = from ussers in _appDbContext.Set<Ussers>()
                              join manufacturer in _appDbContext.Set<Manufacturer>() on ussers.usserId equals manufacturer.usserId
+                             where (loginRequest.Username == ussers.email)
                              select new
                              {
                                  usser.usserType,
@@ -161,6 +162,7 @@ namespace WillowBatMarketWebApiService.BusinessLayer
 
                 var querry = from ussers in _appDbContext.Set<Ussers>()
                              join willowSeller in _appDbContext.Set<WillowSeller>() on ussers.usserId equals willowSeller.usserId
+                             where (loginRequest.Username == ussers.email)
                              select new
                              {
                                  usser.usserType,
@@ -180,7 +182,7 @@ namespace WillowBatMarketWebApiService.BusinessLayer
 
 
                 var querry = from ussers in _appDbContext.Set<Ussers>()
-                             join cricketer in _appDbContext.Set<Cricketer>() on ussers.usserId equals cricketer.usserId 
+                             join cricketer in _appDbContext.Set<Cricketer>() on ussers.usserId equals cricketer.usserId where(loginRequest.Username==ussers.email)
                              select new
                              {
                                  usser.usserType,
