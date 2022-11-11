@@ -53,9 +53,9 @@ namespace WillowBatMarketWebApiService.Controllers
             }
             [HttpPost("buyNow")]
             //Object o
-            public ResponseModel buyNow(Guid itemId, Guid customerId)
+            public ResponseModel buyNow(Guid itemId, Guid customerId,short quantity)
             {
-                return cricketerDashBoardRepository.buyNow(itemId, customerId);
+                return cricketerDashBoardRepository.buyNow(itemId, customerId,quantity);
 
 
             }

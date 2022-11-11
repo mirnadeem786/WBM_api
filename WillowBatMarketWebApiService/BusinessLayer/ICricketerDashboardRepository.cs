@@ -18,7 +18,7 @@ namespace WillowBatMarketWebApiService.BusinessLayer
         public ResponseModel removeFromCart(Guid itemId, Guid customerId);
         public ResponseModel placeOrder(Guid customerId);
         //      object o,
-        public ResponseModel buyNow(Guid itemId, Guid customerId);
+        public ResponseModel buyNow(Guid itemId, Guid customerId,short quantity);
         public ResponseModel orderStaus(Guid orderId);
 
     }
@@ -63,8 +63,8 @@ namespace WillowBatMarketWebApiService.BusinessLayer
                     customerId = customerId,
                     itemId = itemId,
                     itemType = EntityType.BAT,
-                    orderId = Guid.NewGuid(),
-                    orderDate = DateTime.Now,
+                    //orderId = Guid.NewGuid(),
+                    //orderDate = DateTime.Now,
                     amount = bat.sellingPrice * quantity,
                     quantity = quantity,
                     updatedOn = DateTime.Now,
@@ -104,15 +104,21 @@ namespace WillowBatMarketWebApiService.BusinessLayer
 
 
         // object o,
-        public ResponseModel buyNow(Guid itemId, Guid customerId)
+        public ResponseModel buyNow(Guid itemId, Guid customerId,short quantity)
         {
             // Bat bat = new Bat();
             //if (o.GetType().Equals(bat))
             //{
             var stock = appDbContext.Bat.Where(b => b.batId == itemId).Select(bat => bat.batStock).FirstOrDefault();
-            if (stock < 1)
+            if(stock==0)
             {
                 responseModel.Message = "out of stock";
+                return responseModel;
+
+            }
+           if (stock < quantity)
+            {
+                responseModel.Message = "only"+stock+"bat is availble";
                 return responseModel;
 
 
@@ -214,9 +220,9 @@ namespace WillowBatMarketWebApiService.BusinessLayer
 
                     OrderItems order = new OrderItems()
                     {
-                        orderId = item.orderId,
+                        orderId = Guid.NewGuid(),
                         customerId = item.customerId,
-                        orderDate = item.orderDate,
+                        orderDate = DateTime.Now,
                         createdOn = item.createdOn,
                         updatedOn = item.updatedOn,
                         itemId = item.itemId,

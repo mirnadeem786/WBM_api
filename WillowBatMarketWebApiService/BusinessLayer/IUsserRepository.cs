@@ -74,7 +74,7 @@ namespace WillowBatMarketWebApiService.BusinessLayer
                 }
                 _appDbContext.Ussers.Add(usser);
                 _appDbContext.SaveChanges();
-                responseModel.Message = "sucessfully inserted";
+                responseModel.Message = "your have successfully registered";
                 return responseModel;
 
             }
