@@ -186,11 +186,19 @@ namespace WillowBatMarketWebApiService.BusinessLayer
                 responseModel.Message = "no such auction is going";
                 return responseModel;
             }
-           if(DateTime.Compare(record.startingDateTime,DateTime.Now)>0)
+           else if(DateTime.Compare(record.startingDateTime,DateTime.Now)>0)
             {
                 responseModel.Message = "Bidding is not yet started";
                 responseModel.Success = false;
                 return responseModel;
+
+
+            }
+           else if(DateTime.Compare(record.endDateTime,DateTime.Now)<0)
+            {
+                responseModel.Message = "bid has expired";
+                responseModel.Success = false;
+              return  responseModel;
 
 
             }
@@ -245,7 +253,7 @@ namespace WillowBatMarketWebApiService.BusinessLayer
                 responseModel.Success = false;
                 return responseModel;
             }
-            if(record.endDateTime<=DateTime.Now)
+            if(DateTime.Compare(record.endDateTime,DateTime.Now)>0)
             {
 
                responseModel.Data= highestBidder(auctionId).Data;
