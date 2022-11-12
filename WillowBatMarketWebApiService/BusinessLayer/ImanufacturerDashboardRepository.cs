@@ -186,6 +186,14 @@ namespace WillowBatMarketWebApiService.BusinessLayer
                 responseModel.Message = "no such auction is going";
                 return responseModel;
             }
+           if(DateTime.Compare(record.startingDateTime,DateTime.Now)>0)
+            {
+                responseModel.Message = "Bidding is not yet started";
+                responseModel.Success = false;
+                return responseModel;
+
+
+            }
            else if(record.highestAmount>=bidder.amount)
             {
                 responseModel.Message = "price given is below or equal the given bid ";
