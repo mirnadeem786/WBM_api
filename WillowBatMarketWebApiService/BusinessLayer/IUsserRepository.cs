@@ -44,7 +44,7 @@ namespace WillowBatMarketWebApiService.BusinessLayer
 
 
 
-                if (usser.usserType == "Manufacturer")
+                if (usser.usserType == EntityType.MANUFACTURER)
                 {
                     manufacturer.manufacturerId = new Guid();
                     manufacturer.usserId = usser.usserId;
@@ -52,7 +52,7 @@ namespace WillowBatMarketWebApiService.BusinessLayer
                     responseModel.Data = manufacturer;
 
                 }
-                else if (usser.usserType == "Cricketer")
+                else if (usser.usserType == EntityType.CRICKETER)
                 {
 
                     cricketer.cricketerId = new Guid();
@@ -135,7 +135,7 @@ namespace WillowBatMarketWebApiService.BusinessLayer
 
 
 
-            if (usser.usserType.Equals("Manufacturer"))
+            if (usser.usserType.Equals(EntityType.MANUFACTURER))
             {
 
 
@@ -156,7 +156,7 @@ namespace WillowBatMarketWebApiService.BusinessLayer
                 responseModel.Data = querry;
                
             }
-            else if (usser.usserType.Equals("WillowSeller"))
+            else if (usser.usserType.Equals(EntityType.WILLOWSELLER))
             {
 
 

@@ -11,10 +11,11 @@
     }
     public static class EntityType
     {
-        public static readonly string WILLOWSELLER = "WILLOWSELLER";
-        public static readonly string BAT = "BAT";
-        public static readonly string WILLOW = "WILLOW";
-        public static readonly string MANUFACTURER = "MANUFACTURER";
+        public static readonly string WILLOWSELLER = "WillowSeller";
+        public static readonly string BAT = "Bat";
+        public static readonly string WILLOW = "Willow";
+        public static readonly string MANUFACTURER = "Manufacturer";
+        public static readonly string CRICKETER = "Cricketer";
     }
 
     public static class OrderStatusInfo
