@@ -41,8 +41,8 @@ namespace WillowBatMarketWebApiService.DataLayer
             }
             catch(Exception e)
             {
-                var message = itemId + ".png image does not exist";
-                return message;
+                
+                return null;
 
             }
 
