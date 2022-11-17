@@ -22,8 +22,8 @@ namespace WillowBatMarketWebApiService.BusinessLayer
         public ResponseModel Update(BatModel bat, Guid id);
         public ResponseModel Delete(Guid id);
         public ResponseModel GetAll();
-      
-                                                                 
+
+
 
 
 
@@ -51,17 +51,17 @@ namespace WillowBatMarketWebApiService.BusinessLayer
             try
             {
                 _appDbContext.Bat.Add(bat);
-              
+
                 _appDbContext.SaveChanges();
 
 
 
-                    responseModel.Message = "succesfully inserted";
-                    responseModel.Success = true;
-                    responseModel.Data = bat.batId;
-                    return responseModel;
+                responseModel.Message = "succesfully inserted";
+                responseModel.Success = true;
+                responseModel.Data = bat.batId;
+                return responseModel;
 
-                }
+            }
             catch (Exception ex)
             {
                 responseModel.Message = ex.InnerException.ToString();
@@ -136,11 +136,20 @@ namespace WillowBatMarketWebApiService.BusinessLayer
             */
             var bats = _appDbContext.Bat.ToList();
 
-            foreach (var bat in bats)
+            // issue while fetching all images
+            try
             {
-                bat.base64Image =  imageManupulation.getImageByItemId(bat.batId);
+                foreach (var bat in bats)
+                {
+                    bat.base64Image = imageManupulation.getImageByItemId(bat.batId);
 
+                }
             }
+            catch (Exception e)
+            {
+                responseModel.Message = e.Message;
+            }
+
             // List < Bat> bat = _appDbContext.Bat.ToList();
             try
             {
@@ -181,5 +190,5 @@ namespace WillowBatMarketWebApiService.BusinessLayer
             }
         }
     }
-      
+
 }
