@@ -137,18 +137,14 @@ namespace WillowBatMarketWebApiService.BusinessLayer
             var bats = _appDbContext.Bat.ToList();
 
             // issue while fetching all images
-            try
-            {
-                foreach (var bat in bats)
+            foreach (var bat in bats)
                 {
+                    if (imageManupulation.getImageByItemId(bat.batId)!=null)
                     bat.base64Image = imageManupulation.getImageByItemId(bat.batId);
 
                 }
-            }
-            catch (Exception e)
-            {
-                responseModel.Message = e.Message;
-            }
+            
+                   
 
             // List < Bat> bat = _appDbContext.Bat.ToList();
             try

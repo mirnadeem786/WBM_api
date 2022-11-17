@@ -32,10 +32,19 @@ namespace WillowBatMarketWebApiService.DataLayer
 
         {
             var path = Path.Combine(webHostEnvironment.ContentRootPath, "~/Uploads/bat/");
-            string imagepath = path + "/" + itemId + ".png";                                      // + Path.GetExtension(file.FileName);
-            byte[] b = System.IO.File.ReadAllBytes(imagepath);
+            string imagepath = path + "/" + itemId + ".png";
+            // + Path.GetExtension(file.FileName);
+            try
+            {
+                byte[] b = System.IO.File.ReadAllBytes(imagepath);
+                return "data:image/png;base64," + Convert.ToBase64String(b);
+            }
+            catch(Exception e)
+            {
+                var message = itemId + ".png image does not exist";
+                return message;
 
-            return "data:image/png;base64," + Convert.ToBase64String(b);
+            }
 
         }
         public  ResponseModel insertImage(ItemImages item)
