@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace WillowBatMarketWebApiService.Models
 {
@@ -16,9 +17,12 @@ namespace WillowBatMarketWebApiService.Models
         public string batBrand { get; set; }
         public int batLength { get; set; }
         public short batStock { get; set; }
-        public string batImage { get; set; }
+        public string batImagePath { get; set; }
+        public string batImageName { get; set; }
         public decimal costPrice { get; set; }
         public decimal discount { get; set; }
+        [NotMapped]
+        public string base64Image { get; set; }
 
     }
 }

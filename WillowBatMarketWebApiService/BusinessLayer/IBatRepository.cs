@@ -1,9 +1,16 @@
 ﻿using AutoMapper;
+using ImageMagick;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Hosting.Internal;
 using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using WillowBatMarketWebApiService.DataLayer;
 using WillowBatMarketWebApiService.Entity;
 using WillowBatMarketWebApiService.Models;
+using static System.Net.WebRequestMethods;
 
 namespace WillowBatMarketWebApiService.BusinessLayer
 {
@@ -15,6 +22,8 @@ namespace WillowBatMarketWebApiService.BusinessLayer
         public ResponseModel Update(BatModel bat, Guid id);
         public ResponseModel Delete(Guid id);
         public ResponseModel GetAll();
+      
+                                                                 
 
 
 
@@ -24,38 +33,53 @@ namespace WillowBatMarketWebApiService.BusinessLayer
         private readonly IMapper mapper;
         private readonly AppDbContext _appDbContext;
         private readonly ResponseModel responseModel;
-        public BatRepository(AppDbContext appDbContext, IMapper mapper)
+        private readonly IimageManupulation imageManupulation;
+        private readonly IWebHostEnvironment webHostEnvironment; public BatRepository(AppDbContext appDbContext, IMapper mapper, IWebHostEnvironment webHostEnvironment, IimageManupulation imageManupulation)
         {
             this.mapper = mapper;
             _appDbContext = appDbContext;
             responseModel = new ResponseModel();
+            this.imageManupulation = imageManupulation;
         }
 
         public ResponseModel Create(BatModel batModel)
         {
+
+
+            Bat bat = mapper.Map<Bat>(batModel);
+            bat.batId = Guid.NewGuid();
             try
             {
-                
-                   
-
-              
-                Bat bat = mapper.Map<Bat>(batModel);
-                bat.batId = Guid.NewGuid();
-
                 _appDbContext.Bat.Add(bat);
+              
                 _appDbContext.SaveChanges();
-                responseModel.Message = "succesfully inserted";
-                responseModel.Success = true;
-                return responseModel;
 
-            }
+
+
+                    responseModel.Message = "succesfully inserted";
+                    responseModel.Success = true;
+                    responseModel.Data = bat.batId;
+                    return responseModel;
+
+                }
             catch (Exception ex)
             {
-                responseModel.Message = ex.Message;
+                responseModel.Message = ex.InnerException.ToString();
                 responseModel.Error = ex.StackTrace;
                 return responseModel;
             }
         }
+
+
+
+
+
+
+
+
+
+
+
 
         public ResponseModel Delete(Guid id)
         {
@@ -86,7 +110,7 @@ namespace WillowBatMarketWebApiService.BusinessLayer
         {
             try
             {
-                responseModel.Data = _appDbContext.Bat.FirstOrDefault(x => x.batId== id);
+                responseModel.Data = _appDbContext.Bat.FirstOrDefault(x => x.batId == id);
                 _appDbContext.SaveChanges();
                 responseModel.Message = "sucess";
                 return responseModel;
@@ -102,10 +126,25 @@ namespace WillowBatMarketWebApiService.BusinessLayer
 
         public ResponseModel GetAll()
         {
+            /* var bats = (from bat in _appDbContext.Set<Bat>()
+                         join itemImages in _appDbContext.Set<ItemImages>() on bat.batId equals itemImages.itemId
+                         select new
+                         { bat
+                                                           //itemImages
+
+                         }).ToList();
+            */
+            var bats = _appDbContext.Bat.ToList();
+
+            foreach (var bat in bats)
+            {
+                bat.base64Image =  imageManupulation.getImageByItemId(bat.batId);
+
+            }
+            // List < Bat> bat = _appDbContext.Bat.ToList();
             try
             {
-
-                responseModel.Data = _appDbContext.Bat.ToList();
+                responseModel.Data = bats;
                 _appDbContext.SaveChanges();
                 responseModel.Success = true;
                 return responseModel;
@@ -142,4 +181,5 @@ namespace WillowBatMarketWebApiService.BusinessLayer
             }
         }
     }
+      
 }

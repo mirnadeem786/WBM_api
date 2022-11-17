@@ -1,6 +1,9 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.IO;
 using System.Linq;
 using WillowBatMarketWebApiService.Controllers;
 using WillowBatMarketWebApiService.DataLayer;
@@ -28,10 +31,15 @@ namespace WillowBatMarketWebApiService.BusinessLayer
     {
         private readonly AppDbContext appDbContext;
         private readonly ResponseModel responseModel;
-        public ManufacturerDashboardRepository(AppDbContext appDbContext)
+        private readonly IWebHostEnvironment webHostEnvironment;
+
+        
+
+        public ManufacturerDashboardRepository(AppDbContext appDbContext, IWebHostEnvironment webHostEnvironment)
         {
             this.appDbContext = appDbContext;
             this.responseModel = new ResponseModel();
+            this.webHostEnvironment = webHostEnvironment;
         }
 
         public ResponseModel fetch(string willowType)
@@ -109,8 +117,8 @@ namespace WillowBatMarketWebApiService.BusinessLayer
         public ResponseModel ListOfParticipants(Guid auctionId)
         {
 
-            var querry = from auction in appDbContext.Set<Auction>()
-                         join bidder in appDbContext.Set<Bidder>() on auctionId equals bidder.auctionId
+            var querry = from manufacturer in appDbContext.Set<Manufacturer>()
+                         join bidder in appDbContext.Set<Bidder>() on manufacturer.manufacturerId equals bidder.bidderId where bidder.auctionId==auctionId
                          select new
                          {
                              bidder.amount,
@@ -141,7 +149,7 @@ namespace WillowBatMarketWebApiService.BusinessLayer
                 var query = (from auction in appDbContext.Set<Auction>()
                              join bidders in appDbContext.Set<Bidder>() on auction.auctionId equals bidders.auctionId
                              join willow in appDbContext.Set<Willow>() on auction.itemId equals willow.willowId
-                            where bidders.bidderId == BidderId
+                             where bidders.bidderId == BidderId
                              select new
                              {
                                  auction.startingDateTime,
@@ -150,15 +158,19 @@ namespace WillowBatMarketWebApiService.BusinessLayer
                                  bidders.bidDate,
                                  willow.WillowImage,
                                  willow.willowType,
-                                 willow.willowSize
+                                 willow.willowSize,
+                                 willow.willowId,
+                                  willow.base64Image
 
                              }).ToList();
+              
 
                 if (query.Count() == 0)
                 {
                     responseModel.Message = "no result";
                     return responseModel;
                 }
+              
                 responseModel.Data = query;
                 responseModel.Message = "sucessfully fetched";
 
@@ -188,7 +200,7 @@ namespace WillowBatMarketWebApiService.BusinessLayer
             }
            else if(DateTime.Compare(record.startingDateTime,DateTime.Now)>0)
             {
-                responseModel.Message = "Bidding is not yet started";
+                responseModel.Message = "Bid is not yet started";
                 responseModel.Success = false;
                 return responseModel;
 
@@ -269,6 +281,18 @@ namespace WillowBatMarketWebApiService.BusinessLayer
             Auction record = appDbContext.Auction.Find(auctionId);
             record.highestAmount = price;
             appDbContext.Update(record);
+        }
+
+
+        public string getImageByItemId(Guid itemId)
+
+        {
+            var path = Path.Combine(webHostEnvironment.ContentRootPath, "~/Uploads/bat/");
+            string imagepath = path + "/" + itemId + ".png";                                      // + Path.GetExtension(file.FileName);
+            byte[] b = System.IO.File.ReadAllBytes(imagepath);
+
+            return "data:image/png;base64," + Convert.ToBase64String(b);
+
         }
     }
 

@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using WillowBatMarketWebApiService.Entity;
+using WillowBatMarketWebApiService.Models;
 
 namespace WillowBatMarketWebApiService.DataLayer
 {
@@ -42,7 +43,7 @@ namespace WillowBatMarketWebApiService.DataLayer
         public DbSet<Bidder> Bidder { get; set; }
         public DbSet<Ussers> Ussers { get; set; }
         public DbSet<UsserType>UsserType { get; set; }
-   
+         public DbSet<ItemImages> ItemImages { get; set; }    
 
 
 

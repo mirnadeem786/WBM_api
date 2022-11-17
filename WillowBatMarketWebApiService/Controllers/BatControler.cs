@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using WillowBatMarketWebApiService.BusinessLayer;
 using WillowBatMarketWebApiService.Entity;
@@ -15,6 +16,7 @@ namespace WillowBatMarketWebApiService.Controllers
         private readonly IUsserRepository _uissserRepository;
 
         private readonly IWillowRepository willowRepository1;
+
         public BatControler(IBatRepository batRepository,IUsserRepository usserRepository)
         {
             this._iBatRepository = batRepository;
@@ -24,14 +26,15 @@ namespace WillowBatMarketWebApiService.Controllers
 
 
         [HttpPost("create_Bat")]
-        public ResponseModel create(BatModel bat)
+        public ResponseModel create( BatModel bat)
         {
+            //var image = Request.Form.Files[0];
 
             return _iBatRepository.Create(bat);
 
 
         }
-  
+       
 
         [HttpGet("fetch_By_Id")]
 

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Runtime.Serialization;
 using System.Text.Json.Serialization;
 
@@ -17,6 +18,8 @@ namespace WillowBatMarketWebApiService.Entity
        public string willowType { get; set; }
        public  int willowSize { get; set; }
         public string address { get; set; }
+        [NotMapped]
+        public string base64Image { get; set; }
 
 
     }
