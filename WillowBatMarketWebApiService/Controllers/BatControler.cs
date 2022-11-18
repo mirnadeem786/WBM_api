@@ -45,10 +45,10 @@ namespace WillowBatMarketWebApiService.Controllers
 
         }
         [HttpGet("fetchAll")]
-        public ResponseModel fetchAll()
+        public ResponseModel fetchAll([FromQuery]Pagination pagination)
         {
 
-            return _iBatRepository.GetAll();
+            return _iBatRepository.GetAll(pagination);
         }
 
         [HttpDelete("delete")]

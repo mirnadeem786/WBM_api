@@ -21,7 +21,7 @@ namespace WillowBatMarketWebApiService.BusinessLayer
         public ResponseModel Create(BatModel bat);
         public ResponseModel Update(BatModel bat, Guid id);
         public ResponseModel Delete(Guid id);
-        public ResponseModel GetAll();
+        public ResponseModel GetAll(Pagination pagination);
 
 
 
@@ -34,12 +34,14 @@ namespace WillowBatMarketWebApiService.BusinessLayer
         private readonly AppDbContext _appDbContext;
         private readonly ResponseModel responseModel;
         private readonly IimageManupulation imageManupulation;
+
         private readonly IWebHostEnvironment webHostEnvironment; public BatRepository(AppDbContext appDbContext, IMapper mapper, IWebHostEnvironment webHostEnvironment, IimageManupulation imageManupulation)
         {
             this.mapper = mapper;
             _appDbContext = appDbContext;
             responseModel = new ResponseModel();
             this.imageManupulation = imageManupulation;
+          
         }
 
         public ResponseModel Create(BatModel batModel)
@@ -110,7 +112,9 @@ namespace WillowBatMarketWebApiService.BusinessLayer
         {
             try
             {
-                responseModel.Data = _appDbContext.Bat.FirstOrDefault(x => x.batId == id);
+                Bat bat = _appDbContext.Bat.FirstOrDefault(x => x.batId == id);
+                bat.base64Image = imageManupulation.getImageByItemId(bat.batId);
+                responseModel.Data = bat;
                 _appDbContext.SaveChanges();
                 responseModel.Message = "sucess";
                 return responseModel;
@@ -124,7 +128,7 @@ namespace WillowBatMarketWebApiService.BusinessLayer
             }
         }
 
-        public ResponseModel GetAll()
+        public ResponseModel GetAll(Pagination pagination)
         {
             /* var bats = (from bat in _appDbContext.Set<Bat>()
                          join itemImages in _appDbContext.Set<ItemImages>() on bat.batId equals itemImages.itemId
@@ -134,7 +138,11 @@ namespace WillowBatMarketWebApiService.BusinessLayer
 
                          }).ToList();
             */
-            var bats = _appDbContext.Bat.ToList();
+            var bats = _appDbContext.Bat
+              .OrderBy(on => on.sellingPrice)
+        .Skip((pagination.PageNumber - 1) * pagination.PageSize)
+        .Take(pagination.PageSize)
+        .ToList();
 
             // issue while fetching all images
             foreach (var bat in bats)
