@@ -34,7 +34,7 @@ namespace WillowBatMarketWebApiService.Controllers
 
             }
 
-            [HttpGet("fetch_all_willow_by_id")]
+            [HttpGet("fetch_willow_by_id")]
             public ResponseModel fetch(Guid id)
             {
                 return willowRepository.Get(id);

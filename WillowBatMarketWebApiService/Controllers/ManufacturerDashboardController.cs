@@ -80,6 +80,23 @@ namespace WillowBatMarketWebApiService.Controllers
             return imanufacturerDashboardRepository.highestBidder(auctionId);
 
         }
+        [HttpGet("auction-details-by-id")]
+        public IActionResult aucionDetail(Guid auctionId)
+        {
+
+            var res=imanufacturerDashboardRepository.getAuctionDetails(auctionId);
+            return Ok(res);
+
+        }
+
+        [HttpGet("get-auction-willow-by-id")]
+        public IActionResult fetchAuctionWillow(Guid auctionId)
+        {
+
+            var res = imanufacturerDashboardRepository.getAuctionWillow(auctionId);
+            return Ok(res);
+
+        }
 
     }
 }

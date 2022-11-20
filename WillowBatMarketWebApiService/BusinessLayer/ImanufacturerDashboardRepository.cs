@@ -21,8 +21,8 @@ namespace WillowBatMarketWebApiService.BusinessLayer
         public ResponseModel ListOfParticipants(Guid auctionId);
      public ResponseModel highestBidder(Guid auctionId);
         public ResponseModel MyBidsDetails(Guid BidderId);
-        public Auction getAuctionDetails(Guid auctionId);
-
+        public ResponseModel getAuctionDetails(Guid auctionId);
+        public ResponseModel getAuctionWillow(Guid id);
         public ResponseModel winner(Guid auctionId);
 
     }
@@ -94,10 +94,18 @@ namespace WillowBatMarketWebApiService.BusinessLayer
 
         }
 
-        public Auction getAuctionDetails(Guid auctionId)
+        public ResponseModel getAuctionDetails(Guid auctionId)
         {
             Auction auction = appDbContext.Auction.FirstOrDefault(a => a.auctionId == auctionId);
-            return auction;
+           if(auction == null)
+            {
+
+                responseModel.Success = false;
+                responseModel.Message = "no such kind of auction";
+                return responseModel;
+            }
+            responseModel.Data = auction;
+            return responseModel;
         }
 
         public ResponseModel highestBidder(Guid auctionId)
@@ -117,14 +125,14 @@ namespace WillowBatMarketWebApiService.BusinessLayer
         public ResponseModel ListOfParticipants(Guid auctionId)
         {
 
-            var querry = from manufacturer in appDbContext.Set<Manufacturer>()
+            var querry =(from manufacturer in appDbContext.Set<Manufacturer>()
                          join bidder in appDbContext.Set<Bidder>() on manufacturer.manufacturerId equals bidder.bidderId where bidder.auctionId==auctionId
                          select new
                          {
                              bidder.amount,
                              bidder.bidderName,
                              bidder.bidDate,
-                         };
+                         }).ToList();
 
 
              if (querry==null)
@@ -292,6 +300,39 @@ namespace WillowBatMarketWebApiService.BusinessLayer
             byte[] b = System.IO.File.ReadAllBytes(imagepath);
 
             return "data:image/png;base64," + Convert.ToBase64String(b);
+
+        }
+        public ResponseModel getAuctionWillow(Guid id)
+        {
+
+            var querry = from auction in appDbContext.Set<Auction>()
+                         join willow in appDbContext.Set<Willow>() on auction.itemId equals willow.willowId where auction.auctionId==id
+                         select new
+                         {
+                             auction.highestAmount,
+                             auction.auctionId,
+                             auction.itemId,
+                             auction.startingDateTime,
+                             auction.endDateTime,
+                             willow.willowPrice,
+                             willow.WillowImage,
+                             willow.willowType,
+                             willow.willowSize,
+                             willow.willowSellerId,
+                             willow.address
+
+                         };
+
+
+            if (querry == null)
+
+            {
+                responseModel.Success = false;
+                responseModel.Message = "NO RECORD";
+                return responseModel;
+            }
+            responseModel.Data = querry;
+            return responseModel;
 
         }
     }
