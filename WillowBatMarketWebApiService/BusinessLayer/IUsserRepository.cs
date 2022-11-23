@@ -17,7 +17,7 @@ namespace WillowBatMarketWebApiService.BusinessLayer
         public ResponseModel login(LoginRequest loginRequest);
         public ResponseModel viewProfile(Guid usserId);
         public ResponseModel editProfile(Guid id, UsserModel usserModel);
-        // public ResponseModel resetPassword()
+        public ResponseModel resetPassword(ResetPassword resetPassword);
     }
     public class UsserRepository : IUsserRepository
     {
@@ -277,6 +277,40 @@ namespace WillowBatMarketWebApiService.BusinessLayer
    
 
     }
+
+        public ResponseModel resetPassword(ResetPassword resetPassword)
+        {
+
+            Ussers user = getUsser((Guid)resetPassword.UserId);
+            if (!user.encriptedPassword.Equals(resetPassword.OldPassword)) 
+            {
+                responseModel.Success = false;
+                responseModel.Message = "old password is wrong";
+                return responseModel;
+            }
+           
+            try
+            {
+                user.encriptedPassword = resetPassword.NewPassword;
+                _appDbContext.Update(user);
+                _appDbContext.SaveChanges();
+                responseModel.Data = user.usserId;
+                responseModel.Message = "Password Changed Successfully";
+
+            }
+            catch(Exception e)
+            {
+                responseModel.Message = "error";
+                responseModel.Success = false;
+
+
+            }
+            
+                return responseModel;
+
+            
+
+        }
     }
 
 }

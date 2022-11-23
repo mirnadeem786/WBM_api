@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using WillowBatMarketWebApiService.BusinessLayer;
@@ -51,6 +52,15 @@ namespace WillowBatMarketWebApiService.Controllers
 
 
         }
-
+        [HttpPut("ResetPassword")]
+        public IActionResult ResetPassword(ResetPassword obj)
+        {
+            var res =_iUsserRepository.resetPassword(obj);
+            return Ok(res);
+        }
     }
+
+
+
+
 }
