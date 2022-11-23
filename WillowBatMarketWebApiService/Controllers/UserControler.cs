@@ -19,7 +19,7 @@ namespace WillowBatMarketWebApiService.Controllers
         }
 
         [HttpPost("create_usser")]
-        public ResponseModel create(Ussers usser)
+        public ResponseModel create(UsserModel usser)
         {
 
             return _iUsserRepository.createUsser(usser);
@@ -36,16 +36,16 @@ namespace WillowBatMarketWebApiService.Controllers
         }
 
         [HttpPut("edit_usser")]
-        public IActionResult editProfile(Guid usserId, Ussers usser)
+        public IActionResult editProfile(Guid userId, UsserModel user)
         {
-            var user = _iUsserRepository.editProfile(usserId,usser);
-            return Ok(user);
+            var usser = _iUsserRepository.editProfile(userId,user);
+            return Ok(usser);
 
         }
         [HttpGet("view_profile")]
-        public IActionResult viewProfile(Guid usserId)
+        public IActionResult viewProfile(Guid userId)
         {
-            var usser=_iUsserRepository.viewProfile(usserId);
+            var usser=_iUsserRepository.viewProfile(userId);
             return Ok(usser);
 
 

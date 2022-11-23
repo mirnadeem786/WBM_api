@@ -12,6 +12,7 @@ namespace WillowBatMarketWebApiService.Models
             CreateMap<WillowModel,Willow>();
             CreateMap<CricketerDashBoardModel, CricketerDashboard>();
             CreateMap<CartModel, Cart>();
+            CreateMap<UsserModel, Ussers>();
         }
     }
 }

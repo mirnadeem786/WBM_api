@@ -4,6 +4,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
+using System;
 using System.Text.Json.Serialization;
 using WillowBatMarketWebApiService.BusinessLayer;
 using WillowBatMarketWebApiService.DataLayer;
@@ -35,8 +36,7 @@ namespace WillowBatMarketWebApiService
             services.AddScoped<IwillowSellerRepositoryDashboard, willowSellerRepositoryDashboard>();
             services.AddScoped<IUsserRepository,UsserRepository>();
             services.AddScoped<IimageManupulation, ImageManupulation>();
-            services.AddAutoMapper(typeof(Startup));
-            // add this line to apply conversion globally and not only for one property
+            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());            // add this line to apply conversion globally and not only for one property
 
             services.AddControllers().AddJsonOptions(x =>
             {

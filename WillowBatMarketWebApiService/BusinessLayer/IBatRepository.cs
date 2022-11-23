@@ -35,7 +35,7 @@ namespace WillowBatMarketWebApiService.BusinessLayer
         private readonly ResponseModel responseModel;
         private readonly IimageManupulation imageManupulation;
 
-        private readonly IWebHostEnvironment webHostEnvironment; public BatRepository(AppDbContext appDbContext, IMapper mapper, IWebHostEnvironment webHostEnvironment, IimageManupulation imageManupulation)
+        public BatRepository(AppDbContext appDbContext, IMapper mapper, IWebHostEnvironment webHostEnvironment, IimageManupulation imageManupulation)
         {
             this.mapper = mapper;
             _appDbContext = appDbContext;

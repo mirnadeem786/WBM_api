@@ -13,10 +13,10 @@ namespace WillowBatMarketWebApiService.BusinessLayer
 {
     public interface IUsserRepository
     {
-        public ResponseModel createUsser(Ussers usser);
+        public ResponseModel createUsser(UsserModel usser);
         public ResponseModel login(LoginRequest loginRequest);
         public ResponseModel viewProfile(Guid usserId);
-        public ResponseModel editProfile(Guid id, Ussers usser);
+        public ResponseModel editProfile(Guid id, UsserModel usserModel);
         // public ResponseModel resetPassword()
     }
     public class UsserRepository : IUsserRepository
@@ -36,16 +36,21 @@ namespace WillowBatMarketWebApiService.BusinessLayer
             responseModel = new ResponseModel();
             _mapper = mapper;
         }
-        public ResponseModel createUsser(Ussers usser)
+        public ResponseModel createUsser(UsserModel usser)
 
         {
+            Ussers ussers = new Ussers();
+           
+          
+            _mapper.Map(usser, ussers);
             // type.usserTypeid = Guid.NewGuid();
             //usser.UsserTypeId = type.usserTypeid;
             //_appDbContext.UsserType.Add(type);
-            usser.usserId = Guid.NewGuid();
-            usser.createdOn = DateTime.Now;
-            usser.updatedOn = DateTime.Now;
-
+            ussers.usserId = Guid.NewGuid();
+            ussers.createdOn = DateTime.Now;
+            ussers.updatedOn = DateTime.Now;
+            ussers.encriptedPassword = usser.password;
+            ussers.userType=usser.usserType;
             try
             {
 
@@ -54,7 +59,7 @@ namespace WillowBatMarketWebApiService.BusinessLayer
                 if (usser.usserType == EntityType.MANUFACTURER)
                 {
                     manufacturer.manufacturerId = new Guid();
-                    manufacturer.usserId = usser.usserId;
+                    manufacturer.usserId = ussers.usserId;
                     _appDbContext.Manufacturer.Add(manufacturer);
                     responseModel.Data = manufacturer;
 
@@ -63,7 +68,7 @@ namespace WillowBatMarketWebApiService.BusinessLayer
                 {
 
                     cricketer.cricketerId = new Guid();
-                    cricketer.usserId = usser.usserId;
+                    cricketer.usserId = ussers.usserId;
                     _appDbContext.Cricketer.Add(cricketer);
 
                     responseModel.Data = cricketer;
@@ -73,13 +78,13 @@ namespace WillowBatMarketWebApiService.BusinessLayer
                 {
 
                     willowSeller.willowSellerId = new Guid();
-                    willowSeller.usserId = usser.usserId;
+                    willowSeller.usserId = ussers.usserId;
                     _appDbContext.WillowSeller.Add(willowSeller);
                     responseModel.Data = willowSeller;
 
 
                 }
-                _appDbContext.Ussers.Add(usser);
+                _appDbContext.Ussers.Add(ussers);
                 _appDbContext.SaveChanges();
                 responseModel.Message = "your have successfully registered";
                 return responseModel;
@@ -104,24 +109,25 @@ namespace WillowBatMarketWebApiService.BusinessLayer
 
         }
 
-        public ResponseModel editProfile(Guid usserId, Ussers usser)
+        public ResponseModel editProfile(Guid usserId, UsserModel usserModel)
         {
-            var usserRecord=getUsser(usserId);
+            var user=getUsser(usserId);
 
             try
             {
-                usserRecord= _mapper.Map(usser, usserRecord);
-                usserRecord.updatedOn = DateTime.Now;
-                _appDbContext.Update(usserRecord);
+              _mapper.Map(usserModel,user);    
+              
+                user.updatedOn = DateTime.Now;
+                _appDbContext.Update(user);
                 _appDbContext.SaveChanges();
                 responseModel.Message = "your details is succesfully edited";
 
-                responseModel.Data = usserRecord.usserId;
+                responseModel.Data = user.usserId;
             }
             catch (Exception e)
             {
                 responseModel.Success = false;
-                responseModel.Message = "can not be edited";
+                responseModel.Message = e.Message;
 
             }
 
@@ -138,7 +144,7 @@ namespace WillowBatMarketWebApiService.BusinessLayer
             usser = _appDbContext.Ussers.FirstOrDefault(x => x.email == loginRequest.Username);
 
 
-            if (usser != null && !usser.password.Equals(loginRequest.Password))
+            if (usser != null && !usser.encriptedPassword.Equals(loginRequest.Password))
 
             {
                 usser = null;
@@ -168,7 +174,7 @@ namespace WillowBatMarketWebApiService.BusinessLayer
 
 
 
-            if (usser.usserType.Equals(EntityType.MANUFACTURER))
+            if (usser.userType.Equals(EntityType.MANUFACTURER))
             {
 
 
@@ -177,7 +183,7 @@ namespace WillowBatMarketWebApiService.BusinessLayer
                              where (loginRequest.Username == ussers.email)
                              select new
                              {
-                                 usser.usserType,
+                                 usser.userType,
                                  usser.name,
                                  usser.email,
                                  usser.addressDetails,
@@ -189,7 +195,7 @@ namespace WillowBatMarketWebApiService.BusinessLayer
                 responseModel.Data = querry;
 
             }
-            else if (usser.usserType.Equals(EntityType.WILLOWSELLER))
+            else if (usser.userType.Equals(EntityType.WILLOWSELLER))
             {
 
 
@@ -198,7 +204,7 @@ namespace WillowBatMarketWebApiService.BusinessLayer
                              where (loginRequest.Username == ussers.email)
                              select new
                              {
-                                 usser.usserType,
+                                 usser.userType,
                                  usser.name,
                                  usser.email,
                                  usser.addressDetails,
@@ -218,7 +224,7 @@ namespace WillowBatMarketWebApiService.BusinessLayer
                              join cricketer in _appDbContext.Set<Cricketer>() on ussers.usserId equals cricketer.usserId where (loginRequest.Username == ussers.email)
                              select new
                              {
-                                 usser.usserType,
+                                 usser.userType,
                                  usser.name,
                                  usser.email,
                                  usser.addressDetails,
@@ -242,11 +248,12 @@ namespace WillowBatMarketWebApiService.BusinessLayer
             if (usser == null)
             {
                 responseModel.Success = false;
+                responseModel.Message = "user does not exist";
                 return responseModel;
 
 
             }
-
+            responseModel.Success = true;
             responseModel.Data = usser;
             responseModel.Message = "successfully fetched data";
             return responseModel;
