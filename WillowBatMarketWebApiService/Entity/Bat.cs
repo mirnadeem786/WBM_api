@@ -17,11 +17,15 @@ namespace WillowBatMarketWebApiService.Entity
         public string batQuality { get;  set; }
         public Guid manufacturerId { get; set; }
         public string batBrand { get;  set; }
-        public int batLength { get; set; }
         public short batStock { get; set; }
         public DateTime createdOn { get; set; }
         public DateTime updatedOn { get; set; }
         public decimal discount { get; set; }
+        public string toe { get; set; }    
+       
+        public string spine { get; set; }
+        public string batSize { get; set; } 
+
         [NotMapped]
         public string base64Image { get; set; }
 

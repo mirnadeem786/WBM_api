@@ -67,9 +67,27 @@ namespace WillowBatMarketWebApiService.Controllers
 
 
             }
+        [HttpGet("Search")]
+        public IActionResult search(string parm)
+        {
+
+            return Ok( cricketerDashBoardRepository.search(parm));
+
 
         }
+        [HttpGet("bat_recomendation")]
+        public IActionResult batRecomendation(float height)
+        {
+
+            return  Ok (cricketerDashBoardRepository.BatRecomandation(height));
+
+
+        }
+
+
+
     }
+}
 
 
 

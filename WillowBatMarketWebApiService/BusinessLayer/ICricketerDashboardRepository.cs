@@ -20,7 +20,8 @@ namespace WillowBatMarketWebApiService.BusinessLayer
         //      object o,
         public ResponseModel buyNow(Guid itemId, Guid customerId,short quantity);
         public ResponseModel orderStaus(Guid orderId);
-
+        public ResponseModel search(string parm);
+        public ResponseModel BatRecomandation(float height);
     }
     public class CricketerDashboardRepository : ICricketerDashboardRepository
     {
@@ -275,6 +276,45 @@ namespace WillowBatMarketWebApiService.BusinessLayer
             }
 
         }
+
+
+        public ResponseModel search(string value)
+        {
+
+            List<Bat> bats = appDbContext.Bat.FromSqlRaw("dbo.spr_Search @parm={0}", value).ToList();
+
+           if(bats.Count == 0)
+            {
+                responseModel.Success = false;
+                responseModel.Message = "no result found";
+                return responseModel;
+
+            }
+           responseModel.Data = bats;
+
+            return responseModel;
+
+        }
+
+
+        public ResponseModel BatRecomandation(float height)
+        {
+
+            List<Bat> bats = appDbContext.Bat.FromSqlRaw("dbo. spr_BatRecomandation @parm={0}", height).ToList();
+
+            if (bats.Count == 0)
+            {
+                responseModel.Success = false;
+                responseModel.Message = "no result found";
+                return responseModel;
+
+            }
+            responseModel.Data = bats;
+
+            return responseModel;
+
+        }
+
 
     }
 

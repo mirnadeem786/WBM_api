@@ -15,10 +15,10 @@ namespace WillowBatMarketWebApiService.Models
         public string batQuality { get; set; }
         public Guid manufacturerId { get; set; }
         public string batBrand { get; set; }
-        public int batLength { get; set; }
         public short batStock { get; set; }
-        public string batImagePath { get; set; }
-        public string batImageName { get; set; }
+        public string toe { get; set; }
+        public string spine { get; set; }
+        public string batSize { get; set; }
         public decimal costPrice { get; set; }
         public decimal discount { get; set; }
         [NotMapped]
