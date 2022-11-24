@@ -175,6 +175,7 @@ namespace WillowBatMarketWebApiService.BusinessLayer
 
                 if (query.Count() == 0)
                 {
+                    responseModel.Success = false;
                     responseModel.Message = "no result";
                     return responseModel;
                 }

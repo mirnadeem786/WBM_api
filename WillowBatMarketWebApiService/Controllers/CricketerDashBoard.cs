@@ -83,6 +83,26 @@ namespace WillowBatMarketWebApiService.Controllers
 
 
         }
+        [HttpGet("items_in_cart")]
+        public IActionResult itemsInCart(Guid customerId)
+        {
+
+            return Ok(cricketerDashBoardRepository.ItemsInCats(customerId));
+
+
+        }
+
+
+
+        [HttpDelete("clear-cart")]
+        public ResponseModel clearCart(Guid customerId)
+        {
+
+            return cricketerDashBoardRepository.clearCart(customerId);
+
+
+        }
+
 
 
 

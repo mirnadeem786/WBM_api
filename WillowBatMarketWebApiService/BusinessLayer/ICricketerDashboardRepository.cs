@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json.Serialization;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,6 +17,8 @@ namespace WillowBatMarketWebApiService.BusinessLayer
         // Object o
         public ResponseModel addTocart(Guid itemId, Guid customerId, short quantity);
         public ResponseModel removeFromCart(Guid itemId, Guid customerId);
+        public ResponseModel ItemsInCats(Guid customerId);
+        public ResponseModel clearCart(Guid customerId);
         public ResponseModel placeOrder(Guid customerId);
         //      object o,
         public ResponseModel buyNow(Guid itemId, Guid customerId,short quantity);
@@ -40,14 +43,27 @@ namespace WillowBatMarketWebApiService.BusinessLayer
         public ResponseModel addTocart(Guid itemId, Guid customerId, short quantity)
         {
 
-            var bat = appDbContext.Bat.FirstOrDefault(b => b.batId == itemId);
+           var bat = appDbContext.Bat.FirstOrDefault(b => b.batId == itemId);
 
-            var cartitem = appDbContext.Cart.FirstOrDefault(c => c.itemId == itemId && c.customerId == customerId);
+            Cart cartitem = appDbContext.Cart.FirstOrDefault(c => c.customerId == customerId);
             if (cartitem != null)
             {
-                cartitem.quantity = Convert.ToInt16(cartitem.quantity + quantity);
-                cartitem.amount = cartitem.amount + bat.sellingPrice;
+                var item = appDbContext.Cart.FirstOrDefault(c => c.itemId == itemId && c.customerId==customerId);
+                if (item!=null)
+                {
+                    cartitem.quantity = Convert.ToInt16(cartitem.quantity + quantity);
+                    cartitem.amount = cartitem.amount + bat.sellingPrice * quantity;
+                }
+                else
+                {
+                  cartitem.itemId=itemId;
+                    cartitem.quantity=quantity;
+                    cartitem.amount=bat.sellingPrice * quantity;
+                    appDbContext.Cart.Add(cartitem);
 
+
+
+                }
             }
 
 
@@ -276,6 +292,7 @@ namespace WillowBatMarketWebApiService.BusinessLayer
             }
 
         }
+        
 
 
         public ResponseModel search(string value)
@@ -315,9 +332,47 @@ namespace WillowBatMarketWebApiService.BusinessLayer
 
         }
 
+        public ResponseModel ItemsInCats(Guid customerId)
+        {
+            List<Cart> items = appDbContext.Cart.Where(c => c.customerId == customerId).ToList();
+            if(items.Count == 0)
+            {
+                responseModel.Success = false;
+                responseModel.Message = "no item in cart";
+                return responseModel;
+
+            }
+            responseModel.Data = items;
+            responseModel.Message = "succesfull";
+            return responseModel;
+        }
+
+        public ResponseModel clearCart(Guid customerId)
+        {
+            var records =  appDbContext.Cart.Where(p => p.customerId == customerId);
+            if(records==null)
+            {
+                responseModel.Success = false;
+                responseModel.Message = "no item in cart";
+            }
+            try
+            {
+                appDbContext.Cart.RemoveRange(records);
+                appDbContext.SaveChanges();
+                responseModel.Message = "success";
+             }
+            catch(Exception e)
+            {
+                responseModel.Success = false;
+                responseModel.Message = "error";
+
+            }
+
+            return responseModel;     
+                    }
 
     }
-
+            
 
 }
 
