@@ -10,7 +10,7 @@ namespace WillowBatMarketWebApiService.Controllers
     public class WillowSellerController : ControllerBase
     {
         private readonly IWillowSellerRepository willowSellerRepository;
-        WillowSellerController(IWillowSellerRepository willowSellerRepository)
+      public  WillowSellerController(IWillowSellerRepository willowSellerRepository)
         {
             this.willowSellerRepository = willowSellerRepository;
 

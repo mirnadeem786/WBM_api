@@ -1,20 +1,19 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace WillowBatMarketWebApiService.Entity
 {
     public class Cart
     {
         [Key]
-       public Guid cartId { get; set; }
-          public Guid  customerId { get; set; }
-           public short quantity { get; set; }
-          public decimal  amount { get; set; }
-            public DateTime  createdOn { get; set; }
-        public DateTime updatedOn { get; set; }
-           public Guid itemId { get; set; }
-          public string itemType { get; set; }
-       
+        public Guid cartId { get; set; }    
+        public Guid cricketerId { get; set; }
+        public decimal totalAmount { get; set; }
+        public virtual List<CartItems> CartItems { get; set; }
+        [NotMapped]
+        public virtual Cricketer Cricketer { get; set; }    
 
 
     }

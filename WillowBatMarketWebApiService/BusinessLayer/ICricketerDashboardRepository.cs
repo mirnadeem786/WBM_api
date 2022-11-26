@@ -15,13 +15,13 @@ namespace WillowBatMarketWebApiService.BusinessLayer
 
         public ResponseModel fetch(string quality, string bladded, int grains);
         // Object o
-        public ResponseModel addTocart(Guid itemId, Guid customerId, short quantity);
-        public ResponseModel removeFromCart(Guid itemId, Guid customerId);
-        public ResponseModel ItemsInCats(Guid customerId);
-        public ResponseModel clearCart(Guid customerId);
-        public ResponseModel placeOrder(Guid customerId);
+        public ResponseModel addTocart(Guid itemId, Guid cartId, short quantity);
+        public ResponseModel removeFromCart(Guid itemId, Guid cartId);
+        public ResponseModel ItemsInCats(Guid cartId);
+        public ResponseModel clearCart(Guid cartId);
+        public ResponseModel placeOrder(Guid caartId);
         //      object o,
-        public ResponseModel buyNow(Guid itemId, Guid customerId,short quantity);
+        public ResponseModel buyNow(Guid itemId, Guid cartId,short quantity);
         public ResponseModel orderStaus(Guid orderId);
         public ResponseModel search(string parm);
         public ResponseModel BatRecomandation(float height);
@@ -40,88 +40,71 @@ namespace WillowBatMarketWebApiService.BusinessLayer
             this.appDbContext = appDbContext;
         }
         //         Object o
-        public ResponseModel addTocart(Guid itemId, Guid customerId, short quantity)
+        public ResponseModel addTocart(Guid itemId, Guid cartId, short quantity)
         {
+            if(appDbContext.CartItems.FirstOrDefault(i=>i.itemId==itemId)!=null)
+            {
+                responseModel.Message = "item is already in cart";
+                responseModel.Success = false;
+                return responseModel;
+
+
+            }
+            CartItems cartItems = new CartItems();  
 
            var bat = appDbContext.Bat.FirstOrDefault(b => b.batId == itemId);
 
-            Cart cartitem = appDbContext.Cart.FirstOrDefault(c => c.customerId == customerId);
-            if (cartitem != null)
+            Cart cart = appDbContext.Cart.Find(cartId);
+            if (cart != null)
             {
-                var item = appDbContext.Cart.FirstOrDefault(c => c.itemId == itemId && c.customerId==customerId);
-                if (item!=null)
+
+                cartItems.cartId = cart.cartId;
+                cartItems.quantity =   quantity;
+                cartItems.amount = bat.sellingPrice*quantity;
+                cartItems.itemId= itemId;
+                cartItems.createdOn = DateTime.Now;
+                cartItems.updatedOn = DateTime.Now;
+                cart.totalAmount += cartItems.amount;
+                cartItems.itemType = EntityType.BAT;
+              
+                try
                 {
-                    cartitem.quantity = Convert.ToInt16(cartitem.quantity + quantity);
-                    cartitem.amount = cartitem.amount + bat.sellingPrice * quantity;
+                    appDbContext.CartItems.Add(cartItems);
+                    appDbContext.SaveChanges();
+                    responseModel.Message = "item is added in cart";
                 }
-                else
+
+
+
+                catch (Exception ex)
                 {
-                  cartitem.itemId=itemId;
-                    cartitem.quantity=quantity;
-                    cartitem.amount=bat.sellingPrice * quantity;
-                    appDbContext.Cart.Add(cartitem);
+                    responseModel.Success = false;
 
-
+                    responseModel.Message = ex.Message
+    ;
+                    return responseModel;
 
                 }
+
+                
+
             }
-
-
-
             else
             {
-                //{
-                // Bat bat = (Bat)o;
-
-                Cart cart = new Cart
-                {
-                    cartId = Guid.NewGuid(),
-                    createdOn = DateTime.Now,
-                    customerId = customerId,
-                    itemId = itemId,
-                    itemType = EntityType.BAT,
-                    //orderId = Guid.NewGuid(),
-                    //orderDate = DateTime.Now,
-                    amount = bat.sellingPrice * quantity,
-                    quantity = quantity,
-                    updatedOn = DateTime.Now,
-
-
-
-                };
-
-
-                appDbContext.Cart.Add(cart);
-                responseModel.Data = cart;
-            }
-
-            //}
-            //responseModel.Message = "only bat is added to cart";
-            try
-            {
-
-                appDbContext.SaveChanges();
-                responseModel.Message = "item is added in cart";
-            }
-
-
-
-            catch (Exception ex)
-            {
                 responseModel.Success = false;
-
-                responseModel.Message = ex.Message
-;
-                return responseModel;
-
+                responseModel.Message = "error";
             }
 
+
+
+         
+         
             return responseModel;
         }
 
 
         // object o,
-        public ResponseModel buyNow(Guid itemId, Guid customerId,short quantity)
+        public ResponseModel buyNow(Guid itemId, Guid cricketerId,short quantity)
         {
             // Bat bat = new Bat();
             //if (o.GetType().Equals(bat))
@@ -149,12 +132,12 @@ namespace WillowBatMarketWebApiService.BusinessLayer
 
 
                 orderId = Guid.NewGuid(),
-                customerId = customerId,
+                cricketerId = cricketerId,
                 createdOn = DateTime.Now,                      //b.createdOn,
                 updatedOn = DateTime.Now,
                 itemId = itemId,
                 itemType = EntityType.BAT,
-                quantity = 1,
+                quantity = quantity,
                 amount = item.sellingPrice,                        //b.batPrice,
                 discount = item.discount,                    //b.discount,
                 orderDate = DateTime.Now,
@@ -226,19 +209,20 @@ namespace WillowBatMarketWebApiService.BusinessLayer
 
         }
 
-        public ResponseModel placeOrder(Guid customerId)
+        public ResponseModel placeOrder(Guid cartId)
         {
             try
             {
 
-                List<Cart> items = appDbContext.Cart.Where(i => i.customerId == customerId).ToList();
+                Cart cart=appDbContext.Cart.Find(cartId);
+                List<CartItems> items = appDbContext.CartItems.Where(c=>c.cartId==cartId).ToList();
                 foreach (var item in items)
                 {
 
                     OrderItems order = new OrderItems()
                     {
                         orderId = Guid.NewGuid(),
-                        customerId = item.customerId,
+                        cricketerId = cart.cricketerId,
                         orderDate = DateTime.Now,
                         createdOn = item.createdOn,
                         updatedOn = item.updatedOn,
@@ -246,17 +230,28 @@ namespace WillowBatMarketWebApiService.BusinessLayer
                         itemType = item.itemType,
                         quantity = item.quantity,
                         amount = item.amount,
+                        
+
+                    };
+                    OrderStatus orderStatus = new OrderStatus()
+                    {
+                        orderId = order.orderId,
+                        status = OrderStatusInfo.PLACED,
+                        date=DateTime.Now, 
+                        
+
 
                     };
                     appDbContext.OrderItems.Add(order);
+                    appDbContext.OrderStatus.Add(orderStatus);
                     appDbContext.SaveChanges();
-                    removeFromCart(item.itemId, customerId);
+                    clearCart( cartId);
 
                 }
 
                 responseModel.Success = true;
                 responseModel.Message = "order has been palced";
-                responseModel.Data = customerId;
+                responseModel.Data = cartId;
                 return responseModel;
             }
             catch (Exception ex)
@@ -269,18 +264,24 @@ namespace WillowBatMarketWebApiService.BusinessLayer
 
         }
 
-        public ResponseModel removeFromCart(Guid itemId, Guid customerId)
+        public ResponseModel removeFromCart(Guid itemId, Guid cricketerId)
         {
             try
+                
             {
-                Cart item = appDbContext.Cart.FirstOrDefault(c => c.itemId == itemId && c.customerId == customerId);
+               
+                Bat bat = appDbContext.Bat.Find(itemId);
+               Cart cart = appDbContext.Cart.FirstOrDefault(c=>c.cricketerId == cricketerId);
+                CartItems item = appDbContext.CartItems.FirstOrDefault(c => c.itemId == itemId && c.cartId==cart.cartId);
                 if (item == null)
                 {
                     responseModel.Data = "item is  not in cart";
                     return responseModel;
                 }
-                appDbContext.Cart.Remove(item);
+                appDbContext.CartItems.Remove(item);
+                cart.totalAmount -= bat.sellingPrice;
                 appDbContext.SaveChanges();
+               
                 responseModel.Message = "item removed from cart";
                 return responseModel;
             }
@@ -332,10 +333,11 @@ namespace WillowBatMarketWebApiService.BusinessLayer
 
         }
 
-        public ResponseModel ItemsInCats(Guid customerId)
+        public ResponseModel ItemsInCats(Guid cartId)
         {
-            List<Cart> items = appDbContext.Cart.Where(c => c.customerId == customerId).ToList();
-            if(items.Count == 0)
+            var items = appDbContext.Cart.Include(p => p.CartItems).FirstOrDefault(c=>c.cartId==cartId);
+            //var items = (from cart in appDbContext.Set<Cart>() join cartItem in appDbContext.Set<CartItems>() on cart.cartId equals cartItem.cartId where (cart.customerId == customerId) select new { cartItem.amount,cartItem.cartId,cartItem.quantity,cartItem.updatedOn,cartItem.createdOn });
+            if(items==null)
             {
                 responseModel.Success = false;
                 responseModel.Message = "no item in cart";
@@ -344,29 +346,36 @@ namespace WillowBatMarketWebApiService.BusinessLayer
             }
             responseModel.Data = items;
             responseModel.Message = "succesfull";
+
             return responseModel;
         }
 
-        public ResponseModel clearCart(Guid customerId)
+        public ResponseModel clearCart(Guid cartId)
         {
-            var records =  appDbContext.Cart.Where(p => p.customerId == customerId);
-            if(records==null)
-            {
-                responseModel.Success = false;
-                responseModel.Message = "no item in cart";
-            }
+            Cart cart = appDbContext.Cart.Find(cartId);
             try
             {
-                appDbContext.Cart.RemoveRange(records);
-                appDbContext.SaveChanges();
-                responseModel.Message = "success";
-             }
-            catch(Exception e)
+                if (cart != null)
+                {
+               
+                       var items=   appDbContext.CartItems.Where(x => x.cartId == cartId);
+                    responseModel.Data = items;
+
+
+                      appDbContext.CartItems.RemoveRange(items);
+                    cart.totalAmount = 0;
+                    appDbContext.SaveChanges();
+                    responseModel.Message = "items removed";
+
+                }
+            }
+            catch (Exception e)
             {
                 responseModel.Success = false;
                 responseModel.Message = "error";
 
             }
+            
 
             return responseModel;     
                     }

@@ -63,7 +63,7 @@ namespace WillowBatMarketWebApiService.BusinessLayer
         {
             try
             {
-               _appDbContext.Remove(_appDbContext.WillowSeller.Find(id));
+               _appDbContext.Remove(_appDbContext.Cricketer.Find(id));
                 responseModel.Data = id;
                _appDbContext.SaveChanges();
                 responseModel.Message = "sucessfully deleted";

@@ -10,6 +10,7 @@ namespace WillowBatMarketWebApiService.Models
 
         public Guid cricketerId { get; set; }
         public Guid usserId { get; set; }
+        public virtual Cart Cart { get; set; }  
     }
     }
 

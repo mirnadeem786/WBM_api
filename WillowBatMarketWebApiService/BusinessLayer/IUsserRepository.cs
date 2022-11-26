@@ -58,7 +58,7 @@ namespace WillowBatMarketWebApiService.BusinessLayer
 
                 if (usser.usserType == EntityType.MANUFACTURER)
                 {
-                    manufacturer.manufacturerId = new Guid();
+                    manufacturer.manufacturerId = Guid.NewGuid();
                     manufacturer.usserId = ussers.usserId;
                     _appDbContext.Manufacturer.Add(manufacturer);
                     responseModel.Data = manufacturer;
@@ -66,11 +66,13 @@ namespace WillowBatMarketWebApiService.BusinessLayer
                 }
                 else if (usser.usserType == EntityType.CRICKETER)
                 {
-
-                    cricketer.cricketerId = new Guid();
+                    Cart cart = new Cart();
+                   cart.cartId= Guid.NewGuid();
+                    cricketer.cricketerId =  Guid.NewGuid();
+                    cart.cricketerId = cricketer.cricketerId;
                     cricketer.usserId = ussers.usserId;
                     _appDbContext.Cricketer.Add(cricketer);
-
+                    _appDbContext.Cart.Add(cart);
                     responseModel.Data = cricketer;
 
                 }
@@ -220,8 +222,9 @@ namespace WillowBatMarketWebApiService.BusinessLayer
             {
 
 
+
                 var querry = from ussers in _appDbContext.Set<Ussers>()
-                             join cricketer in _appDbContext.Set<Cricketer>() on ussers.usserId equals cricketer.usserId where (loginRequest.Username == ussers.email)
+                             join cricketer in _appDbContext.Set<Cricketer>()  on ussers.usserId equals cricketer.usserId join cart in _appDbContext.Set<Cart>() on cricketer.cricketerId equals cart. cricketerId where (loginRequest.Username == ussers.email)
                              select new
                              {
                                  usser.userType,
@@ -229,7 +232,9 @@ namespace WillowBatMarketWebApiService.BusinessLayer
                                  usser.email,
                                  usser.addressDetails,
                                  usser.usserId,
-                                 cricketer.cricketerId
+                                 cricketer.cricketerId,
+                                cart.cartId
+                                 
 
                              };
 

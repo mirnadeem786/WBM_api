@@ -8,7 +8,7 @@ namespace WillowBatMarketWebApiService.Entity
 
         [Key]
         public Guid orderId { get; set; }
-        public Guid customerId { get; set; }
+        public Guid cricketerId { get; set; }
         public DateTime orderDate { get; set; }
         public short quantity { get; set; }
         public decimal amount { get; set; }

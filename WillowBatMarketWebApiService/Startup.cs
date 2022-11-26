@@ -6,6 +6,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using System;
 using System.Text.Json.Serialization;
+using System.Web.Http;
 using WillowBatMarketWebApiService.BusinessLayer;
 using WillowBatMarketWebApiService.DataLayer;
 using WillowBatMarketWebApiService.Models;
@@ -77,6 +78,7 @@ namespace WillowBatMarketWebApiService
                 app.UseStaticFiles();
                 app.UseCors(MyAllowSpecificOrigins);
 
+
           
 
             app.UseHttpsRedirection();
@@ -84,7 +86,8 @@ namespace WillowBatMarketWebApiService
                 {
                     endpoints.MapControllers();
                 });
-             
-            }
+    
+        }
+      
         }
 }

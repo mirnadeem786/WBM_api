@@ -25,18 +25,18 @@ namespace WillowBatMarketWebApiService.Controllers
             }
             [HttpPost("addToCart")]
             // Object o
-            public ResponseModel addToCat(Guid itemId, Guid customerId, short quantity)
+            public ResponseModel addToCat(Guid itemId, Guid cartId, short quantity)
             {
-                return cricketerDashBoardRepository.addTocart(itemId, customerId, quantity);
+                return cricketerDashBoardRepository.addTocart(itemId, cartId, quantity);
 
 
             }
 
             [HttpPost("place_order")]
-            public ResponseModel placeOrder(Guid customerId)
+            public ResponseModel placeOrder(Guid cartId)
             {
 
-                return cricketerDashBoardRepository.placeOrder(customerId);
+                return cricketerDashBoardRepository.placeOrder(cartId);
 
 
             }
@@ -45,10 +45,10 @@ namespace WillowBatMarketWebApiService.Controllers
 
             [HttpDelete("removeFromCart")]
 
-            public ResponseModel removeFromCart(Guid itemId, Guid customerId)
+            public ResponseModel removeFromCart(Guid itemId, Guid cartId)
             {
 
-                return cricketerDashBoardRepository.removeFromCart(itemId, customerId);
+                return cricketerDashBoardRepository.removeFromCart(itemId, cartId);
 
             }
             [HttpPost("buyNow")]
@@ -84,10 +84,10 @@ namespace WillowBatMarketWebApiService.Controllers
 
         }
         [HttpGet("items_in_cart")]
-        public IActionResult itemsInCart(Guid customerId)
+        public IActionResult itemsInCart(Guid cartId)
         {
 
-            return Ok(cricketerDashBoardRepository.ItemsInCats(customerId));
+            return Ok(cricketerDashBoardRepository.ItemsInCats(cartId));
 
 
         }
@@ -95,10 +95,10 @@ namespace WillowBatMarketWebApiService.Controllers
 
 
         [HttpDelete("clear-cart")]
-        public ResponseModel clearCart(Guid customerId)
+        public ResponseModel clearCart(Guid cartId)
         {
 
-            return cricketerDashBoardRepository.clearCart(customerId);
+            return cricketerDashBoardRepository.clearCart(cartId);
 
 
         }

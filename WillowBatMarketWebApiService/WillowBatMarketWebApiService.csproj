@@ -8,6 +8,7 @@
 		<PackageReference Include="AutoMapper" Version="10.1.1" />
 		<PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="8.1.1" />
 		<PackageReference Include="Magick.NET-Q16-AnyCPU" Version="12.2.1" />
+		<PackageReference Include="Microsoft.AspNet.WebApi.WebHost" Version="5.2.9" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.0" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="5.0.0" />
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.1" />

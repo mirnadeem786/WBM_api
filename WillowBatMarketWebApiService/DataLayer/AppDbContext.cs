@@ -44,7 +44,16 @@ namespace WillowBatMarketWebApiService.DataLayer
         public DbSet<Ussers> Ussers { get; set; }
         public DbSet<UsserType>UsserType { get; set; }
          public DbSet<ItemImages> ItemImages { get; set; }    
+        public DbSet<CartItems> CartItems { get; set; }
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<CartItems>().HasKey(c => new { c.itemId, c.cartId });
+            modelBuilder.Entity<CartItems>().HasOne<Cart>().WithMany(c => c.CartItems).HasForeignKey(f => f.cartId);
+          modelBuilder.Entity<Cricketer>().HasOne(c=>c.Cart).WithOne().OnDelete(DeleteBehavior.Cascade);
+            modelBuilder.Entity<Cart>().HasMany(c=>c.CartItems).WithOne().OnDelete(DeleteBehavior.Cascade); 
+            modelBuilder.Entity<Cricketer>().HasOne(c => c.Cart).WithOne().HasForeignKey<Cart>(c => c.cricketerId);
 
+        }
 
 
     }
