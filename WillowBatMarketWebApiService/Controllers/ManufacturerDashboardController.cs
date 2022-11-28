@@ -98,5 +98,40 @@ namespace WillowBatMarketWebApiService.Controllers
 
         }
 
+        [HttpGet("Order_received")]
+        public IActionResult orderReceived(Guid manufacturerId)
+        {
+
+
+
+            return Ok(imanufacturerDashboardRepository.orderRecieved(manufacturerId));
+
+        }
+
+        [HttpPost("action_on_order")]
+
+        public ResponseModel actionOnOrder(Guid orderId, string action)
+        {
+
+            return imanufacturerDashboardRepository.actionOnOrder(orderId, action);
+        }
+        [HttpGet("most-items-sold")]
+
+        public IActionResult mostItemsSold(Guid manufacturerId)
+        {
+
+            return Ok(imanufacturerDashboardRepository.mostBatsSold(manufacturerId));
+
+        }
+        [HttpGet("items-close-to-out-of-stock")]
+
+        public IActionResult itemsCloseToOutOfStock(Guid manufacturerId)
+        {
+
+            return Ok(imanufacturerDashboardRepository.batsCloseToOutOfStock(manufacturerId));
+
+        }
+
+
     }
 }

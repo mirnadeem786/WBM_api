@@ -25,6 +25,7 @@ namespace WillowBatMarketWebApiService.BusinessLayer
         public ResponseModel orderStaus(Guid orderId);
         public ResponseModel search(string parm);
         public ResponseModel BatRecomandation(float height);
+       
     }
     public class CricketerDashboardRepository : ICricketerDashboardRepository
     {
@@ -109,7 +110,7 @@ namespace WillowBatMarketWebApiService.BusinessLayer
             // Bat bat = new Bat();
             //if (o.GetType().Equals(bat))
             //{
-            var stock = appDbContext.Bat.Where(b => b.batId == itemId).Select(bat => bat.batStock).FirstOrDefault();
+            var stock = appDbContext.Bat.Where(b => b.batId == itemId).Select(bat => bat.quantity).FirstOrDefault();
             if(stock==0)
             {
                 responseModel.Message = "out of stock";
@@ -125,7 +126,7 @@ namespace WillowBatMarketWebApiService.BusinessLayer
             }
             var item = appDbContext.Bat.FirstOrDefault(i => i.batId == itemId);
             // Bat b = (Bat)o;
-            item.batStock--;
+            item.quantity-=quantity;
 
             OrderItems order = new OrderItems()
             {
@@ -138,7 +139,7 @@ namespace WillowBatMarketWebApiService.BusinessLayer
                 itemId = itemId,
                 itemType = EntityType.BAT,
                 quantity = quantity,
-                amount = item.sellingPrice,                        //b.batPrice,
+                amount = item.sellingPrice*quantity,                        //b.batPrice,
                 discount = item.discount,                    //b.discount,
                 orderDate = DateTime.Now,
 
@@ -203,7 +204,7 @@ namespace WillowBatMarketWebApiService.BusinessLayer
         {
 
             var record = appDbContext.OrderStatus.OrderByDescending(x => x.date).FirstOrDefault();
-            responseModel.Data = record.status;
+            responseModel.Data = record;
             responseModel.Success = true;
             return responseModel;
 
@@ -380,6 +381,8 @@ namespace WillowBatMarketWebApiService.BusinessLayer
             return responseModel;     
                     }
 
+       
+        
     }
             
 

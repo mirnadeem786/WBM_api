@@ -17,7 +17,7 @@ namespace WillowBatMarketWebApiService.Entity
         public string batQuality { get;  set; }
         public Guid manufacturerId { get; set; }
         public string batBrand { get;  set; }
-        public short batStock { get; set; }
+        public short quantity { get; set; }
         public DateTime createdOn { get; set; }
         public DateTime updatedOn { get; set; }
         public decimal discount { get; set; }

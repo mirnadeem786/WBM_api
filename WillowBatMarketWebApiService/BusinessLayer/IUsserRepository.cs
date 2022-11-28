@@ -223,7 +223,7 @@ namespace WillowBatMarketWebApiService.BusinessLayer
 
 
 
-                var querry = from ussers in _appDbContext.Set<Ussers>()
+                var querry = (from ussers in _appDbContext.Set<Ussers>()
                              join cricketer in _appDbContext.Set<Cricketer>()  on ussers.usserId equals cricketer.usserId join cart in _appDbContext.Set<Cart>() on cricketer.cricketerId equals cart. cricketerId where (loginRequest.Username == ussers.email)
                              select new
                              {
@@ -236,7 +236,7 @@ namespace WillowBatMarketWebApiService.BusinessLayer
                                 cart.cartId
                                  
 
-                             };
+                             });
 
                 responseModel.Data = querry;
 

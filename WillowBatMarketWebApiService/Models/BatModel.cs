@@ -15,7 +15,7 @@ namespace WillowBatMarketWebApiService.Models
         public string batQuality { get; set; }
         public Guid manufacturerId { get; set; }
         public string batBrand { get; set; }
-        public short batStock { get; set; }
+        public short quantity { get; set; }
         public string toe { get; set; }
         public string spine { get; set; }
         public string batSize { get; set; }

@@ -2,9 +2,11 @@
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.IO;
 using System.Linq;
+using System.Security.Cryptography;
 using WillowBatMarketWebApiService.Controllers;
 using WillowBatMarketWebApiService.DataLayer;
 using WillowBatMarketWebApiService.Entity;
@@ -24,7 +26,10 @@ namespace WillowBatMarketWebApiService.BusinessLayer
         public ResponseModel getAuctionDetails(Guid auctionId);
         public ResponseModel getAuctionWillow(Guid id);
         public ResponseModel winner(Guid auctionId);
-
+        public ResponseModel orderRecieved(Guid manufacturerId);
+        public ResponseModel actionOnOrder(Guid orderId, string action);
+        public ResponseModel mostBatsSold(Guid manufacturerId);
+        public ResponseModel batsCloseToOutOfStock(Guid manufacturerId);
     }
 
     public class ManufacturerDashboardRepository : ImanufacturerDashboardRepository
@@ -32,14 +37,15 @@ namespace WillowBatMarketWebApiService.BusinessLayer
         private readonly AppDbContext appDbContext;
         private readonly ResponseModel responseModel;
         private readonly IWebHostEnvironment webHostEnvironment;
+        private readonly IBatRepository batRepository;
 
-        
 
-        public ManufacturerDashboardRepository(AppDbContext appDbContext, IWebHostEnvironment webHostEnvironment)
+        public ManufacturerDashboardRepository(AppDbContext appDbContext, IWebHostEnvironment webHostEnvironment, IBatRepository batRepository)
         {
             this.appDbContext = appDbContext;
             this.responseModel = new ResponseModel();
             this.webHostEnvironment = webHostEnvironment;
+            this.batRepository = batRepository;
         }
 
         public ResponseModel fetch(string willowType)
@@ -336,11 +342,132 @@ namespace WillowBatMarketWebApiService.BusinessLayer
             return responseModel;
 
         }
+
+        public ResponseModel orderRecieved(Guid manufacturerId)
+        {
+
+            var OrderdItems = (from orderItems in appDbContext.Set<OrderItems>()
+                               join bat in appDbContext.Set<Bat>() on orderItems.itemId equals bat.batId
+                               where bat.manufacturerId == manufacturerId
+                               select new
+                               {
+                                   bat,
+                                   orderItems
+
+
+
+
+                               }).ToList();
+
+
+            if(OrderdItems==null)
+            {
+
+                responseModel.Message = "no order";
+                responseModel.Success = false;
+                return responseModel;
+
+            }
+            responseModel.Data = OrderdItems;
+            responseModel.Message = "your recieved orders";
+            return responseModel;
+
+
+
+
+
+
+        }
+        public ResponseModel actionOnOrder(Guid orderId,string action)
+        {
+            var orderStatus = appDbContext.OrderStatus.FirstOrDefault(o => o.orderId == orderId);
+            orderStatus.status = action;
+            orderStatus.date=DateTime.Now;
+           
+            try
+            { 
+              appDbContext.OrderStatus.Add(orderStatus);
+                appDbContext.SaveChanges();
+                responseModel.Message = "success";
+                return responseModel;
+
+            }
+            catch(Exception)
+            {
+                responseModel.Message = "error";
+                return responseModel;
+            
+            }
+
+
+
+        }
+
+
+        public ResponseModel mostBatsSold(Guid manufacturerId)
+        {
+            var query = (from orderItems in appDbContext.Set<OrderItems>()
+                         join bats in appDbContext.Set<Bat>() on orderItems.itemId equals bats.batId
+                         where (bats.manufacturerId == manufacturerId)
+                         group orderItems by orderItems.itemId into g
+                         select new
+                         {
+                             itemId = g.Key,
+
+                             totalQuantity = g.Sum(orderItems => orderItems.quantity)
+
+                         }
+                        ).OrderByDescending(i => i.totalQuantity).Take(10).ToList();
+
+
+            if (query.Count() < 0)
+            {
+                responseModel.Success = false;
+                return responseModel;
+
+            }
+
+            List<Bat> bats1 = new List<Bat>();
+            foreach(var item in query)
+            {
+                bats1.Add((Bat) batRepository.Get(item.itemId).Data);
+
+            }
+            responseModel.Data = bats1;
+            responseModel.Message = "success";
+            return responseModel;
+        }
+
+        public ResponseModel batsCloseToOutOfStock(Guid manufacturerId)
+        {
+            var query = appDbContext.Set<Bat>().Where(b => b.manufacturerId == manufacturerId  ).GroupBy(x => x.batId).Select(group => new
+            {
+                batId = group.Key,
+                Quantity = group.Sum(o => o.quantity),
+
+
+            }).Where(Q => Q.Quantity < 10).ToList();
+            if(query.Count<0)
+            {
+                responseModel.Success = false;
+                return responseModel;
+
+            }
+            responseModel.Data=query;
+            List<Bat> bats = new List<Bat>();
+            foreach( var item in query)
+            {
+                bats.Add((Bat)batRepository.Get(item.batId).Data);
+
+
+            }
+            responseModel.Data = bats;
+            return responseModel;
+        }
     }
 
-
+    
 
 
 
 }
-
