@@ -21,7 +21,7 @@ namespace WillowBatMarketWebApiService.BusinessLayer
         public ResponseModel fetch(string type);
         public ResponseModel partcipateInAuction(Bidder bidder);
         public ResponseModel ListOfParticipants(Guid auctionId);
-     public ResponseModel highestBidder(Guid auctionId);
+     public Bidder highestBidder(Guid auctionId);
         public ResponseModel MyBidsDetails(Guid BidderId);
         public ResponseModel getAuctionDetails(Guid auctionId);
         public ResponseModel getAuctionWillow(Guid id);
@@ -29,6 +29,8 @@ namespace WillowBatMarketWebApiService.BusinessLayer
         public ResponseModel orderRecieved(Guid manufacturerId);
         public ResponseModel actionOnOrder(Guid orderId, string action);
         public ResponseModel mostBatsSold(Guid manufacturerId);
+        public ResponseModel fetchBats(Guid manufacturerId);
+   
         public ResponseModel batsCloseToOutOfStock(Guid manufacturerId);
     }
 
@@ -114,17 +116,17 @@ namespace WillowBatMarketWebApiService.BusinessLayer
             return responseModel;
         }
 
-        public ResponseModel highestBidder(Guid auctionId)
+        public Bidder highestBidder(Guid auctionId)
         {
             var record = appDbContext.Bidder.Where(a => a.auctionId == auctionId).OrderByDescending(x=>x.amount).FirstOrDefault();
-            if(record == null)
+            if(record != null)
             {
-                responseModel.Success = false;
-                responseModel.Message = "NO RECORD";
+                return record;
 
             }
-            responseModel.Data = record;
-            return responseModel;
+            return null;
+           
+           
    
         }
 
@@ -270,24 +272,40 @@ namespace WillowBatMarketWebApiService.BusinessLayer
 
         }
 
-        public ResponseModel winner(Guid auctionId)
+        public ResponseModel winner(Guid ManufacturerId)
         {
-            var record = appDbContext.Auction.FirstOrDefault(a => a.auctionId == auctionId);
+            var record =( from bidder in appDbContext.Set<Bidder>()
+                         join auction in appDbContext.Set<Auction>() on bidder.auctionId equals auction.auctionId
+                         where bidder.bidderId == ManufacturerId
+                         select new
+                         {
+
+                             auction
+
+                         }).ToList(); 
             if(record==null)
             {
+               
                 
                 responseModel.Message = "no such Auction Exist";
                 responseModel.Success = false;
                 return responseModel;
             }
-            if(DateTime.Compare(record.endDateTime,DateTime.Now)>0)
+            List<Auction> winings = new List<Auction>();
+            foreach(var item in record)
             {
 
-               responseModel.Data= highestBidder(auctionId).Data;
-                return responseModel;
+                if (DateTime.Compare(item.auction.endDateTime, DateTime.Now) < 0)
+                {
+                    
+                   if( highestBidder(item.auction.auctionId).bidderId==ManufacturerId)
+                    winings.Add(appDbContext.Auction.FirstOrDefault(a=>a.auctionId==item.auction.auctionId));
+                }
+
+
             }
-            responseModel.Message = "Auction is still running";
-            responseModel.Success = false;
+            responseModel.Data = winings;
+          
             return responseModel;
         }
 
@@ -449,7 +467,7 @@ namespace WillowBatMarketWebApiService.BusinessLayer
             }).Where(Q => Q.Quantity < 10).ToList();
             if(query.Count<0)
             {
-                responseModel.Success = false;
+                responseModel.Message="no items";
                 return responseModel;
 
             }
@@ -464,6 +482,27 @@ namespace WillowBatMarketWebApiService.BusinessLayer
             responseModel.Data = bats;
             return responseModel;
         }
+
+        public ResponseModel fetchBats(Guid manufacturerId)
+        {
+          
+           //  var bats = appDbContext.Manufacturer.Include(p => p.bats).Where(m =>m. manufacturerId == manufacturerId).ToList();
+            var bats=appDbContext.Bat.Where(m => m.manufacturerId == manufacturerId).ToList();
+            if (bats.Count<0)
+            {
+                responseModel.Message = "no bats available";
+                return responseModel;
+
+            }
+            responseModel.Data = bats;
+            responseModel.Message = "Success";
+            return responseModel;
+        }
+
+
+       
+
+
     }
 
     

@@ -28,9 +28,9 @@ namespace WillowBatMarketWebApiService.Controllers
 
         }
         [HttpGet("winning-bidder")]
-        public IActionResult winning(Guid auctionId)
+        public IActionResult winning(Guid bidderId)
         {
-            var res = imanufacturerDashboardRepository.winner(auctionId);
+            var res = imanufacturerDashboardRepository.winner(bidderId);
             return Ok(res);
 
 
@@ -74,10 +74,10 @@ namespace WillowBatMarketWebApiService.Controllers
         }
 
         [HttpGet("highest_bidder")]
-        public ResponseModel highestBidder(Guid auctionId)
+        public IActionResult highestBidder(Guid auctionId)
         {
 
-            return imanufacturerDashboardRepository.highestBidder(auctionId);
+            return Ok(imanufacturerDashboardRepository.highestBidder(auctionId));
 
         }
         [HttpGet("auction-details-by-id")]
@@ -129,6 +129,14 @@ namespace WillowBatMarketWebApiService.Controllers
         {
 
             return Ok(imanufacturerDashboardRepository.batsCloseToOutOfStock(manufacturerId));
+
+        }
+        [HttpGet("fetch-bats")]
+
+        public IActionResult fetch(Guid manufacturerId)
+        {
+
+            return Ok(imanufacturerDashboardRepository.fetchBats(manufacturerId));
 
         }
 

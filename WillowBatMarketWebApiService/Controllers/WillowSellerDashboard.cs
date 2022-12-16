@@ -12,9 +12,9 @@ namespace WillowBatMarketWebApiService.Controllers
     public class WillowSellerDashboard : ControllerBase
 
     {
-        private IwillowSellerRepositoryDashboard iwillowSellerDashboard;
+        private IwillowSellerDashboardRepo iwillowSellerDashboard;
 
-        public WillowSellerDashboard(IwillowSellerRepositoryDashboard iwillowSellerDashboard)
+        public WillowSellerDashboard(IwillowSellerDashboardRepo iwillowSellerDashboard)
         {
             this.iwillowSellerDashboard = iwillowSellerDashboard;
         }
@@ -33,8 +33,25 @@ namespace WillowBatMarketWebApiService.Controllers
         {
 
             return iwillowSellerDashboard.upload(willowModel);
- 
+
         }
+        [HttpGet("fetch-auction-willow")]
+        
+        public IActionResult fetchAuctionWillow(Guid willowSellerId)
+        {
+
+
+            return Ok(iwillowSellerDashboard.fetchAuction(willowSellerId));
+        }
+        [HttpGet("fetch-willow")]
+
+        public IActionResult fetchWillow(Guid willowSellerId)
+        {
+
+
+            return Ok(iwillowSellerDashboard.fetchWillows(willowSellerId));
+        }
+
 
     }
 }

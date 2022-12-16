@@ -34,7 +34,7 @@ namespace WillowBatMarketWebApiService
             services.AddScoped<ICricketerRepository, CricketerRepository>();
             services.AddScoped<ICricketerDashboardRepository,CricketerDashboardRepository>();
             services.AddScoped<ImanufacturerDashboardRepository, ManufacturerDashboardRepository>();
-            services.AddScoped<IwillowSellerRepositoryDashboard, willowSellerRepositoryDashboard>();
+            services.AddScoped<IwillowSellerDashboardRepo, WillowSellerDashboardRepo>();
             services.AddScoped<IUsserRepository,UsserRepository>();
             services.AddScoped<IimageManupulation, ImageManupulation>();
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());            // add this line to apply conversion globally and not only for one property
