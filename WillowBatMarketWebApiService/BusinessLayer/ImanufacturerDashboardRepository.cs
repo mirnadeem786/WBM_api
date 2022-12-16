@@ -438,7 +438,7 @@ namespace WillowBatMarketWebApiService.BusinessLayer
                         ).OrderByDescending(i => i.totalQuantity).Take(10).ToList();
 
 
-            if (query.Count() < 0)
+            if (query.Count() <= 0)
             {
                 responseModel.Success = false;
                 return responseModel;

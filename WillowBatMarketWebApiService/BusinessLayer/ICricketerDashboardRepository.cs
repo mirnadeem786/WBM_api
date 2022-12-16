@@ -32,10 +32,12 @@ namespace WillowBatMarketWebApiService.BusinessLayer
         public Guid shopingCartId { get; set; }
         private readonly AppDbContext appDbContext;
         private readonly ResponseModel responseModel;
+        private readonly IBatRepository batRepository;
         IMapper mapper;
         public const string cartSessionKey = "cartId";
-        public CricketerDashboardRepository(AppDbContext appDbContext, IMapper mapper)
+        public CricketerDashboardRepository(AppDbContext appDbContext, IMapper mapper,IBatRepository batRepository)
         {
+            this.batRepository = batRepository;
             this.mapper = mapper;
             responseModel = new ResponseModel();
             this.appDbContext = appDbContext;
@@ -127,6 +129,7 @@ namespace WillowBatMarketWebApiService.BusinessLayer
             var item = appDbContext.Bat.FirstOrDefault(i => i.batId == itemId);
             // Bat b = (Bat)o;
             item.quantity-=quantity;
+            
 
             OrderItems order = new OrderItems()
             {
@@ -159,6 +162,9 @@ namespace WillowBatMarketWebApiService.BusinessLayer
                 };
                 appDbContext.OrderStatus.Add(orderStatus);
                 appDbContext.SaveChanges();
+                BatModel batModel = new BatModel();
+                mapper.Map(item, batModel);
+                batRepository.Update(batModel, item.batId);
 
                 return responseModel;
             }
