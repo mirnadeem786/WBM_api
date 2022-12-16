@@ -9,6 +9,7 @@ namespace WillowBatMarketWebApiService.Models
         {
             CreateMap<ManufacturerModel, Manufacturer>();
             CreateMap<BatModel, Bat>();
+            CreateMap<Bat,BatModel>();  
             CreateMap<WillowModel,Willow>();
             CreateMap<CricketerDashBoardModel, CricketerDashboard>();
             CreateMap<CartModel, Cart>();

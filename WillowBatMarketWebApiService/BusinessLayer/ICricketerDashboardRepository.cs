@@ -35,12 +35,13 @@ namespace WillowBatMarketWebApiService.BusinessLayer
         private readonly IBatRepository batRepository;
         IMapper mapper;
         public const string cartSessionKey = "cartId";
-        public CricketerDashboardRepository(AppDbContext appDbContext, IMapper mapper,IBatRepository batRepository)
+        public CricketerDashboardRepository(AppDbContext appDbContext, IMapper mapper, IBatRepository batRepository)
         {
-            this.batRepository = batRepository;
+
             this.mapper = mapper;
             responseModel = new ResponseModel();
             this.appDbContext = appDbContext;
+            this.batRepository = batRepository;
         }
         //         Object o
         public ResponseModel addTocart(Guid itemId, Guid cartId, short quantity)
@@ -161,10 +162,12 @@ namespace WillowBatMarketWebApiService.BusinessLayer
                     date = order.orderDate
                 };
                 appDbContext.OrderStatus.Add(orderStatus);
-                appDbContext.SaveChanges();
+               
+
                 BatModel batModel = new BatModel();
                 mapper.Map(item, batModel);
                 batRepository.Update(batModel, item.batId);
+                appDbContext.SaveChanges();
 
                 return responseModel;
             }
@@ -220,7 +223,7 @@ namespace WillowBatMarketWebApiService.BusinessLayer
         {
             try
             {
-
+                BatModel batModel = new BatModel();
                 Cart cart=appDbContext.Cart.Find(cartId);
                 List<CartItems> items = appDbContext.CartItems.Where(c=>c.cartId==cartId).ToList();
                 foreach (var item in items)
@@ -249,8 +252,15 @@ namespace WillowBatMarketWebApiService.BusinessLayer
 
 
                     };
+
                     appDbContext.OrderItems.Add(order);
                     appDbContext.OrderStatus.Add(orderStatus);
+                   
+                    Bat bat = appDbContext.Bat.Find(item.itemId);
+                    bat.quantity-=item.quantity;
+                 
+                    mapper.Map(bat, batModel);
+                    batRepository.Update(batModel, item.itemId);
                     appDbContext.SaveChanges();
                     clearCart( cartId);
 
@@ -386,11 +396,27 @@ namespace WillowBatMarketWebApiService.BusinessLayer
 
             return responseModel;     
                     }
+        private BatModel Update( Guid id)
+        {
+            try
+            {
+                BatModel batModel = new BatModel();
+                Bat bat = appDbContext.Bat.Find(id);
+                appDbContext.Update(bat);
+                mapper.Map(bat, batModel);
+                appDbContext.SaveChanges();
+                return batModel;
+            }
+            catch (Exception ex)
+            {
 
-       
-        
+                return null;
+            }
+        }
+
+
     }
-            
+    
 
 }
 
