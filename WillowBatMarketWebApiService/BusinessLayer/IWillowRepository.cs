@@ -97,9 +97,9 @@ namespace WillowBatMarketWebApiService.BusinessLayer
 
             catch (Exception ex)
             {
-                responseModel.Message = ex.Message;
+                responseModel.Message = "error";
                 responseModel.Error = ex.StackTrace;
-                responseModel.Success = true;
+                responseModel.Success = false;
                 return responseModel;
             }
 

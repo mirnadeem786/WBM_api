@@ -14,7 +14,9 @@ namespace WillowBatMarketWebApiService.BusinessLayer
         public ResponseModel upload(WillowModel model);
         public ResponseModel fetchAuction(Guid willowSellerId);
         public ResponseModel fetchWillows(Guid willowSellerId);
-
+        public ResponseModel deleteAuction(Guid auctionId);
+        public ResponseModel editAuction(Guid auctionId);
+      
 
     }
 
@@ -27,15 +29,17 @@ public class WillowSellerDashboardRepo : IwillowSellerDashboardRepo
     private readonly AppDbContext appDbContext;
     private ResponseModel responseModel;
     private readonly IMapper mapper;
-    public WillowSellerDashboardRepo(AppDbContext appDbContext, IMapper mapper)
-    {
-        this.mapper = mapper;
-        this.appDbContext = appDbContext;
-        responseModel = new ResponseModel();
-    }
+        private readonly IWillowRepository willowRepository;
+        public WillowSellerDashboardRepo(AppDbContext appDbContext, IMapper mapper, IWillowRepository willowRepository)
+        {
+            this.mapper = mapper;
+            this.appDbContext = appDbContext;
+            responseModel = new ResponseModel();
+            this.willowRepository = willowRepository;
+        }
 
 
-    public ResponseModel startBiddeing(Auction auction)
+        public ResponseModel startBiddeing(Auction auction)
     {
         try
 
@@ -103,6 +107,7 @@ public class WillowSellerDashboardRepo : IwillowSellerDashboardRepo
                              willow.WillowImage,
                              willow.willowType,
                              willow.willowSize,
+                             auction.auctionId
 
 
                          }).ToList();
@@ -118,14 +123,7 @@ public class WillowSellerDashboardRepo : IwillowSellerDashboardRepo
     }
         public ResponseModel fetchWillows(Guid willowSellerId)
         {
-            var querry = (from auction in appDbContext.Set<Auction>()
-                          join willow in appDbContext.Set<Willow>() on auction.itemId !equals willow.willowId
-                          where willow.willowSellerId == willowSellerId
-                          select new
-                          {
-                       willow
-
-                          }).ToList();
+            var querry =appDbContext.Willow.Where(i=>i.willowSellerId==willowSellerId).ToList();
 
             if (querry.Count < 0)
             {
@@ -137,6 +135,29 @@ public class WillowSellerDashboardRepo : IwillowSellerDashboardRepo
             return responseModel;
         }
 
+        public ResponseModel deleteAuction(Guid auctionId)
+        {
+            var auction = appDbContext.Auction.Find(auctionId);
+           // willowRepository.Delete(auction.itemId);
+            appDbContext.Auction.Remove(auction);
+            try
+            {
+                appDbContext.SaveChanges();
+                responseModel.Message = "Delete sucessfull";
+                responseModel.Data = auction.auctionId;
+                return responseModel;
+            }catch(Exception e)
+            {
+                 responseModel.Message=e.Message;
+                responseModel.Success=false;
+                return responseModel;
+            }
+        }
+
+        public ResponseModel editAuction(Guid auctionId)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
 

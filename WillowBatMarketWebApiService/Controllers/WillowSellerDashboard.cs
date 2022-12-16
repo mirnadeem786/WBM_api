@@ -51,6 +51,12 @@ namespace WillowBatMarketWebApiService.Controllers
 
             return Ok(iwillowSellerDashboard.fetchWillows(willowSellerId));
         }
+        [HttpDelete("delete-auction")]
+        public ResponseModel deleteAuction(Guid auctionId)
+        {
+            return iwillowSellerDashboard.deleteAuction(auctionId);
+
+        }
 
 
     }
