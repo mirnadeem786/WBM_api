@@ -41,7 +41,7 @@ namespace WillowBatMarketWebApiService.BusinessLayer
             _appDbContext = appDbContext;
             responseModel = new ResponseModel();
             this.imageManupulation = imageManupulation;
-          
+
         }
 
         public ResponseModel Create(BatModel batModel)
@@ -138,6 +138,7 @@ namespace WillowBatMarketWebApiService.BusinessLayer
 
                          }).ToList();
             */
+            responseModel.TotalRecords = _appDbContext.Bat.Count();
             var bats = _appDbContext.Bat
               .OrderBy(on => on.sellingPrice)
         .Skip((pagination.PageNumber - 1) * pagination.PageSize)
@@ -145,14 +146,14 @@ namespace WillowBatMarketWebApiService.BusinessLayer
         .ToList();
 
             // issue while fetching all images
-            foreach (var bat in bats)
-                {
-                    if (imageManupulation.getImageByItemId(bat.batId)!=null)
+          /*  foreach (var bat in bats)
+            {
+                if (imageManupulation.getImageByItemId(bat.batId) != null)
                     bat.base64Image = imageManupulation.getImageByItemId(bat.batId);
 
-                }
-            
-                   
+            }*/
+
+
 
             // List < Bat> bat = _appDbContext.Bat.ToList();
             try
