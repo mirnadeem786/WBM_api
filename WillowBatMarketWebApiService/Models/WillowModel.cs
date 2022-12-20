@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace WillowBatMarketWebApiService.Models
 {
@@ -18,6 +19,18 @@ namespace WillowBatMarketWebApiService.Models
         public string willowType { get; set; }
         public int willowSize { get; set; }
         public string address { get; set; }
+        [NotMapped]
+       public decimal totalAmount
+        {
+            get
+            {
+
+                return willowPrice* willowSize;
+            }
+
+
+        }
+
     }
 
 

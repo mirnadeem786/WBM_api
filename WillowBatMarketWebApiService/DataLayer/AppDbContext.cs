@@ -48,11 +48,13 @@ namespace WillowBatMarketWebApiService.DataLayer
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<CartItems>().HasKey(c => new { c.itemId, c.cartId });
-            modelBuilder.Entity<CartItems>().HasOne<Cart>().WithMany(c => c.CartItems).HasForeignKey(f => f.cartId);
+           modelBuilder.Entity<CartItems>().HasOne<Cart>().WithMany(c => c.CartItems).HasForeignKey(f => f.cartId);
           modelBuilder.Entity<Cricketer>().HasOne(c=>c.Cart).WithOne().OnDelete(DeleteBehavior.Cascade);
             modelBuilder.Entity<Cart>().HasMany(c=>c.CartItems).WithOne().OnDelete(DeleteBehavior.Cascade); 
             modelBuilder.Entity<Cricketer>().HasOne(c => c.Cart).WithOne().HasForeignKey<Cart>(c => c.cricketerId);
-
+            modelBuilder.Entity<Cricketer>().HasMany(orders => orders.order).WithOne();
+            modelBuilder.Entity<OrderItems>().HasMany(o => o.orderstatus).WithOne();
+            
         }
 
 

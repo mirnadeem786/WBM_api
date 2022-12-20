@@ -91,6 +91,14 @@ namespace WillowBatMarketWebApiService.Controllers
 
 
         }
+        [HttpGet("my order")]
+        public IActionResult myOrder(Guid cricketerId)
+        {
+
+            return Ok(cricketerDashBoardRepository.myorder(cricketerId));
+
+
+        }
 
 
 

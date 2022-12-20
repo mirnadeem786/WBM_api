@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace WillowBatMarketWebApiService.Entity
 {
@@ -17,5 +19,7 @@ namespace WillowBatMarketWebApiService.Entity
         public Guid itemId { get; set; }
         public string itemType { get; set; }
         public decimal discount { get; set; }
+     
+      public List < OrderStatus> orderstatus { get; set; }
     }
 }

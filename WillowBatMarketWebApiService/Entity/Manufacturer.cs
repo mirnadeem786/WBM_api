@@ -11,6 +11,6 @@ namespace WillowBatMarketWebApiService.Entity
         public Guid manufacturerId { get; set; }
         public Guid usserId { get; set; }
         //public  Address address { get; set; }
-        public  virtual List<Bat>bats { get; set; }  
+        public   List<Bat>bats { get; set; }  
     }
 }

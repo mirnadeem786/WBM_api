@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace WillowBatMarketWebApiService.Entity
 {
@@ -9,6 +10,8 @@ namespace WillowBatMarketWebApiService.Entity
         public Guid orderId { get; set; }
         public string status { get; set; }
         public DateTime date { get; set; }
+       
+
 
     }
 }

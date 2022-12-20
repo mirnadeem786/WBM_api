@@ -20,6 +20,17 @@ namespace WillowBatMarketWebApiService.Entity
         public string address { get; set; }
         [NotMapped]
         public string base64Image { get; set; }
+        [NotMapped]
+        public decimal totalAmount
+        {
+            get
+            {
+
+                return willowPrice * willowSize;
+            }
+
+
+        }
 
 
     }

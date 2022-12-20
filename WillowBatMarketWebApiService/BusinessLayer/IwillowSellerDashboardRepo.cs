@@ -107,8 +107,10 @@ public class WillowSellerDashboardRepo : IwillowSellerDashboardRepo
                              willow.WillowImage,
                              willow.willowType,
                              willow.willowSize,
-                             auction.auctionId
-
+                             auction.auctionId,
+                             willow.totalAmount
+                             
+                             
 
                          }).ToList();
 

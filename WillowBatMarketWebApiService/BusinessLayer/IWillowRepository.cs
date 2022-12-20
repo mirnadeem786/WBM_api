@@ -55,14 +55,14 @@ namespace WillowBatMarketWebApiService.BusinessLayer
 
                 }
 
-              /*  using (var stream = new MemoryStream())
-                {
-                    image.CopyTo(stream);
-                    willow.WillowImage = stream.ToArray();
+                /*  using (var stream = new MemoryStream())
+                  {
+                      image.CopyTo(stream);
+                      willow.WillowImage = stream.ToArray();
 
-              */
-                
-            
+                */
+
+                willow.willowPrice = willowModel.willowSize * willowModel.willowPrice;
                 _appDbContext.Add(willow);
                 _appDbContext.SaveChanges();
                 responseModel.Success = true;

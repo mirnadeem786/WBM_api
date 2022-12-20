@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace WillowBatMarketWebApiService.Entity
 {
@@ -13,6 +14,6 @@ namespace WillowBatMarketWebApiService.Entity
         public DateTime startingDateTime { get; set; }
         public DateTime endDateTime { get; set; }
           public decimal  highestAmount { get; set; }
-
+       // public virtual Willow willow { get;set } }   
     }
 }

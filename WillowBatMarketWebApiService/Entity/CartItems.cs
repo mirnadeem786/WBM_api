@@ -16,6 +16,7 @@ namespace WillowBatMarketWebApiService.Entity
         public DateTime updatedOn { get; set; }
            public Guid itemId { get; set; }
           public string itemType { get; set; }
+         public Cricketer Cricketer { get; set; }
        
        
 

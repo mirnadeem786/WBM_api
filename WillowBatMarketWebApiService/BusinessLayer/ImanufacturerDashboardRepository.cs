@@ -27,6 +27,7 @@ namespace WillowBatMarketWebApiService.BusinessLayer
         public ResponseModel getAuctionWillow(Guid id);
         public ResponseModel winner(Guid auctionId);
         public ResponseModel orderRecieved(Guid manufacturerId);
+        public ResponseModel fetchOrderById(Guid orderId);
         public ResponseModel actionOnOrder(Guid orderId, string action);
         public ResponseModel mostBatsSold(Guid manufacturerId);
         public ResponseModel fetchBats(Guid manufacturerId);
@@ -84,7 +85,8 @@ namespace WillowBatMarketWebApiService.BusinessLayer
                              willow.WillowImage,
                              willow.willowType,
                              willow.willowSize,
-                             willow.willowSellerId
+                             willow.willowSellerId,
+                             willow.totalAmount
 
                          };
 
@@ -344,7 +346,8 @@ namespace WillowBatMarketWebApiService.BusinessLayer
                              willow.willowType,
                              willow.willowSize,
                              willow.willowSellerId,
-                             willow.address
+                             willow.address,
+                             willow.totalAmount
 
                          };
 
@@ -499,10 +502,35 @@ namespace WillowBatMarketWebApiService.BusinessLayer
             return responseModel;
         }
 
+        public ResponseModel fetchOrderById(Guid orderId)
+        {
 
-       
+            var OrderdItems = (from orderItems in appDbContext.Set<OrderItems>()
+                               join bat in appDbContext.Set<Bat>() on orderItems.itemId equals bat.batId
+                               where orderItems.orderId==orderId 
+                               select new
+                               {
+                                   bat,
+                                   orderItems
 
 
+
+
+                               }).ToList();
+
+
+            if (OrderdItems == null)
+            {
+
+                responseModel.Message = "no order";
+                responseModel.Success = false;
+                return responseModel;
+
+            }
+            responseModel.Data = OrderdItems;
+            responseModel.Message = "your recieved orders";
+            return responseModel;
+        }
     }
 
     

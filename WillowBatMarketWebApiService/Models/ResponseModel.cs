@@ -1,4 +1,6 @@
-﻿namespace WillowBatMarketWebApiService.Models
+﻿using System.Drawing.Printing;
+
+namespace WillowBatMarketWebApiService.Models
 {
     public class ResponseModel
     {
@@ -7,7 +9,7 @@
         public int Status { get; set; }
         public string Message { get; set; }
         public object Data { get; set; }
-
+        public int TotalRecords { get; set; }
         public ResponseModel()
         {
             Success = true;

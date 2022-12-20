@@ -25,6 +25,7 @@ namespace WillowBatMarketWebApiService.BusinessLayer
         public ResponseModel orderStaus(Guid orderId);
         public ResponseModel search(string parm);
         public ResponseModel BatRecomandation(float height);
+        public ResponseModel myorder(Guid cricketerId);
        
     }
     public class CricketerDashboardRepository : ICricketerDashboardRepository
@@ -212,7 +213,7 @@ namespace WillowBatMarketWebApiService.BusinessLayer
         public ResponseModel orderStaus(Guid orderId)
         {
 
-            var record = appDbContext.OrderStatus.OrderByDescending(x => x.date).FirstOrDefault();
+            var record = appDbContext.OrderStatus.OrderByDescending(x => x.date).FirstOrDefault(o=>o.orderId==orderId);
             responseModel.Data = record;
             responseModel.Success = true;
             return responseModel;
@@ -414,7 +415,38 @@ namespace WillowBatMarketWebApiService.BusinessLayer
             }
         }
 
+        public ResponseModel myorder(Guid cricketerId)
+        {
 
+            var query = (from cricketer in appDbContext.Set<Cricketer>()
+                         where cricketer.cricketerId == cricketerId
+                         join orderItems in appDbContext.Set<OrderItems>() on cricketer.cricketerId equals
+                           orderItems.cricketerId
+                           join bat in appDbContext.Set<Bat>() on orderItems.itemId equals bat.batId join status in appDbContext.Set<OrderStatus>() on orderItems.orderId equals status.orderId
+                     
+                         
+                         select new
+                           {
+                               
+                               orderItems,
+                               bat,
+                               
+
+
+
+
+                           }).ToList();
+
+              if (query.Count<1)
+              {
+                  responseModel.Message = "err";
+                responseModel.Success = false;
+                  return responseModel;
+              }
+            responseModel.Data = query;
+            return responseModel;
+          
+        }
     }
     
 

@@ -107,6 +107,15 @@ namespace WillowBatMarketWebApiService.Controllers
             return Ok(imanufacturerDashboardRepository.orderRecieved(manufacturerId));
 
         }
+        [HttpGet("fetch_order-by-id")]
+        public IActionResult fechOrderById(Guid orderId)
+        {
+
+
+
+            return Ok(imanufacturerDashboardRepository.fetchOrderById(orderId));
+
+        }
 
         [HttpPost("action_on_order")]
 
