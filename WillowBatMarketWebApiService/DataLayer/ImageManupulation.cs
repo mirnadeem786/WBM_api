@@ -2,6 +2,9 @@
 using System.IO;
 using System;
 using WillowBatMarketWebApiService.Models;
+using System.Collections.Generic;
+using System.Collections;
+using System.Resources;
 
 namespace WillowBatMarketWebApiService.DataLayer
 {
@@ -9,6 +12,7 @@ namespace WillowBatMarketWebApiService.DataLayer
     {
         public string getImageByItemId(Guid itemId);
  public ResponseModel insertImage(ItemImages item);
+        public ResponseModel fetchImages(string imageType);
 
 
     }
@@ -99,12 +103,54 @@ namespace WillowBatMarketWebApiService.DataLayer
             return responseModel;
         }
 
+        public ResponseModel fetchImages(string imageType)
+        {
 
 
 
+            DirectoryInfo directory = new DirectoryInfo(Path.Combine(webHostEnvironment.ContentRootPath, "~/Uploads/" + imageType + "/"));
+            FileInfo[] files = directory.GetFiles();
+            ArrayList list=new ArrayList();
+            foreach (FileInfo file in files)
+            {
+                if (file.Extension == ".png")
+                {
+
+
+                    try
+                    {
+                        byte[] b = System.IO.File.ReadAllBytes(file.FullName);
+                        list.Add("data:image/png;base64," + Convert.ToBase64String(b));
+                    }
+                    catch (Exception e)
+                    {
+
+                        return null;
+
+                    }
+
+                   
+
+                }
+            }
+                if(list.Count<0)
+                {
+
+                    responseModel.Success = false;
+
+                    return responseModel;
+
+                }
+                responseModel.Data = list;
+              
+                return responseModel;
+
+            }
+           
 
 
 
-
+           
+        }
     }
-}
+

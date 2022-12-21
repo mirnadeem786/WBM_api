@@ -32,6 +32,13 @@ public ImageManupulationController(IimageManupulation imageManupulation)
 
             return Ok(imageManupulation.getImageByItemId(itemId));
         }
+        [HttpGet("get-all-images")]
+
+        public ActionResult getimage(string imageType)
+        {
+
+            return Ok(imageManupulation.fetchImages(imageType));
+        }
 
 
     }
