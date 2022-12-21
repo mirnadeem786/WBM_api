@@ -106,7 +106,7 @@ namespace WillowBatMarketWebApiService.DataLayer
         public ResponseModel fetchImages(string imageType)
         {
 
-
+            Image image = new Image();
 
             DirectoryInfo directory = new DirectoryInfo(Path.Combine(webHostEnvironment.ContentRootPath, "~/Uploads/" + imageType + "/"));
             FileInfo[] files = directory.GetFiles();
@@ -119,8 +119,11 @@ namespace WillowBatMarketWebApiService.DataLayer
 
                     try
                     {
+                        image.imageUrl = file.FullName;
+                        image.imageName=file.Name;
                         byte[] b = System.IO.File.ReadAllBytes(file.FullName);
-                        list.Add("data:image/png;base64," + Convert.ToBase64String(b));
+                        image.image = "data:image/png;base64," + Convert.ToBase64String(b);
+                        list.Add(image);
                     }
                     catch (Exception e)
                     {
