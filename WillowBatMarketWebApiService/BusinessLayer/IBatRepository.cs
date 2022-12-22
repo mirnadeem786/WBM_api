@@ -140,7 +140,7 @@ namespace WillowBatMarketWebApiService.BusinessLayer
             */
             responseModel.TotalRecords = _appDbContext.Bat.Count();
             var bats = _appDbContext.Bat
-              .OrderBy(on => on.sellingPrice)
+              .OrderBy(on => on.batId)
         .Skip((pagination.PageNumber - 1) * pagination.PageSize)
         .Take(pagination.PageSize)
         .ToList();

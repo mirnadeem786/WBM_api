@@ -20,6 +20,6 @@ namespace WillowBatMarketWebApiService.Entity
         public string itemType { get; set; }
         public decimal discount { get; set; }
      
-      public List < OrderStatus> orderstatus { get; set; }
+     // public List < OrderStatus> orderstatus { get; set; }
     }
 }

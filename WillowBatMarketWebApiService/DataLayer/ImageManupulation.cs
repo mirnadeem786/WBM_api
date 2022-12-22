@@ -5,6 +5,8 @@ using WillowBatMarketWebApiService.Models;
 using System.Collections.Generic;
 using System.Collections;
 using System.Resources;
+using System.Linq;
+using Microsoft.AspNetCore.Mvc;
 
 namespace WillowBatMarketWebApiService.DataLayer
 {
@@ -12,7 +14,7 @@ namespace WillowBatMarketWebApiService.DataLayer
     {
         public string getImageByItemId(Guid itemId);
  public ResponseModel insertImage(ItemImages item);
-        public ResponseModel fetchImages(string imageType);
+        public ResponseModel fetchImages(Pagination pagination, string imageType);
 
 
     }
@@ -103,13 +105,15 @@ namespace WillowBatMarketWebApiService.DataLayer
             return responseModel;
         }
 
-        public ResponseModel fetchImages(string imageType)
+        public ResponseModel fetchImages(Pagination pagination,string imageType)
         {
 
             Image image;
 
             DirectoryInfo directory = new DirectoryInfo(Path.Combine(webHostEnvironment.ContentRootPath, "~/Uploads/" + imageType + "/"));
-            FileInfo[] files = directory.GetFiles();
+          IEnumerable  <FileInfo> files = directory.GetFiles().AsEnumerable().OrderBy(o=>o.Name)
+        .Skip((pagination.PageNumber - 1) * pagination.PageSize)
+        .Take(pagination.PageSize);
             ArrayList list=new ArrayList();
             foreach (FileInfo file in files)
             {

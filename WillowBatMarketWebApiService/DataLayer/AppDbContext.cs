@@ -52,8 +52,8 @@ namespace WillowBatMarketWebApiService.DataLayer
           modelBuilder.Entity<Cricketer>().HasOne(c=>c.Cart).WithOne().OnDelete(DeleteBehavior.Cascade);
             modelBuilder.Entity<Cart>().HasMany(c=>c.CartItems).WithOne().OnDelete(DeleteBehavior.Cascade); 
             modelBuilder.Entity<Cricketer>().HasOne(c => c.Cart).WithOne().HasForeignKey<Cart>(c => c.cricketerId);
-            modelBuilder.Entity<Cricketer>().HasMany(orders => orders.order).WithOne();
-            modelBuilder.Entity<OrderItems>().HasMany(o => o.orderstatus).WithOne();
+          //  modelBuilder.Entity<Cricketer>().HasMany(orders => orders.order).WithOne();
+           // modelBuilder.Entity<OrderItems>().HasMany(o => o.orderstatus).WithOne();
             
         }
 

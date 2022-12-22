@@ -14,6 +14,6 @@ namespace WillowBatMarketWebApiService.Entity
      public Guid usserId { get; set; }
      
      public  Cart Cart { get; set; }
-        public  List<OrderItems> order{ get; set; } 
+       // public  List<OrderItems> order{ get; set; } 
     }
 }

@@ -34,10 +34,10 @@ public ImageManupulationController(IimageManupulation imageManupulation)
         }
         [HttpGet("get-all-images")]
 
-        public ActionResult getimage(string imageType)
+        public ActionResult getimage([FromQuery] Pagination pagination,string imageType)
         {
 
-            return Ok(imageManupulation.fetchImages(imageType));
+            return Ok(imageManupulation.fetchImages(pagination,imageType));
         }
 
 
