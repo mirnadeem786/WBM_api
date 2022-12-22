@@ -106,13 +106,14 @@ namespace WillowBatMarketWebApiService.DataLayer
         public ResponseModel fetchImages(string imageType)
         {
 
-            Image image = new Image();
+            Image image;
 
             DirectoryInfo directory = new DirectoryInfo(Path.Combine(webHostEnvironment.ContentRootPath, "~/Uploads/" + imageType + "/"));
             FileInfo[] files = directory.GetFiles();
             ArrayList list=new ArrayList();
             foreach (FileInfo file in files)
             {
+                image = new Image();
                 if (file.Extension == ".png")
                 {
 
