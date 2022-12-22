@@ -143,13 +143,14 @@ namespace WillowBatMarketWebApiService.DataLayer
             }
                 if(list.Count<0)
                 {
-
+              
                     responseModel.Success = false;
 
                     return responseModel;
 
                 }
-                responseModel.Data = list;
+            responseModel.TotalRecords = list.Count;
+            responseModel.Data = list;
               
                 return responseModel;
 
