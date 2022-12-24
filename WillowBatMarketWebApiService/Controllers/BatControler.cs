@@ -52,10 +52,10 @@ namespace WillowBatMarketWebApiService.Controllers
         }
 
         [HttpDelete("delete")]
-        public ResponseModel delete(Guid id)
+        public ResponseModel delete(Guid batId)
         {
 
-            return _iBatRepository.Delete(id);
+            return _iBatRepository.Delete(batId);
         }
         [HttpPut("update")]
         public ResponseModel update(BatModel bat, Guid id)

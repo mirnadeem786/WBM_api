@@ -89,7 +89,7 @@ namespace WillowBatMarketWebApiService.BusinessLayer
             {
 
                 var bat = _appDbContext.Bat.Find(id);
-                if (bat != null)
+                if (bat != null && !imageManupulation.deleteImage(id, EntityType.BAT)) ;
                 {
                     _appDbContext.Bat.Remove(bat);
                     _appDbContext.SaveChanges();

@@ -15,6 +15,7 @@ namespace WillowBatMarketWebApiService.DataLayer
         public string getImageByItemId(Guid itemId);
  public ResponseModel insertImage(ItemImages item);
         public ResponseModel fetchImages(Pagination pagination, string imageType);
+        public bool deleteImage(Guid itemId,string imageType);  
 
 
     }
@@ -155,11 +156,34 @@ namespace WillowBatMarketWebApiService.DataLayer
                 return responseModel;
 
             }
-           
+
+        public bool deleteImage(Guid itemId,string imageType)
+
+        {
+
+            var path = Path.Combine(webHostEnvironment.ContentRootPath, "~/Uploads/" + imageType + "/");
+            // file.(path);
+            if (!System.IO.Directory.Exists(path))
+            {
+                System.IO.Directory.CreateDirectory(path);
+
+            }
+
+            string imagepath = path + "/" + itemId + ".png";
 
 
 
-           
+            //+Path.GetExtension(file.FileName);
+            if (System.IO.File.Exists(imagepath))
+            {
+                System.IO.File.Delete(imagepath);
+                return true;
+            }
+            return false;
+
+
+
         }
+    }
     }
 
